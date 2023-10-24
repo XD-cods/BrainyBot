@@ -14,18 +14,13 @@ public class Question {
 	String answerDescription;
 
 	static Question[] readJsonQuestions(String jsonPath) {
-		Question[] questions;
-		String json = "";
-		try (BufferedReader bf = new BufferedReader(new FileReader(jsonPath))) {
-			String line;
-			while ((line = bf.readLine()) != null) {
-				json += line;
-			}
+		try (BufferedReader reader = new BufferedReader(new FileReader(jsonPath))) {
+			Gson gson = new GsonBuilder().create();
+			Question[] questions = gson.fromJson(reader, Question[].class);
+			return questions;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Gson gson = new GsonBuilder().create();
-		questions = gson.fromJson(json, Question[].class);
-		return questions;
+		return null;
 	}
 }
