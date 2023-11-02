@@ -21,19 +21,36 @@ public class BotUpdate implements UpdatesListener {
 
 	private final TelegramBot bot;
 	private final Map<Long, UserQuizSession> users = new HashMap<>();
-	private final QuizReadRepository readRepository;
+	private final QuizRepository readRepository;
 
-	public BotUpdate(TelegramBot bot, QuizReadRepository readRepository) {
+	public BotUpdate(TelegramBot bot, QuizRepository readRepository) {
 		this.bot = bot;
 		this.readRepository = readRepository;
 	}
 
 	@Override
 	public int process(List<Update> updates) throws NullPointerException {
-		Update update = updates.get(0);
+		Update update = updates.get(updates.size() - 1);
 		if (update.callbackQuery() != null) {
-			return callbackHandler(update);
-		} else if (update.message() == null) {
+			Long chatId = update.callbackQuery().from().id();
+			if (users.containsKey(chatId)) {
+				UserQuizSession userQuizSession = users.get(chatId);
+				if (userQuizSession.isQuizMode()) {
+					return callbackHandler(update, userQuizSession, chatId);
+				} else {
+					try {
+						readRepository.loadQuestions(Integer.parseInt(update.callbackQuery().data()));
+						userQuizSession.setQuizMode(true);
+						sendQuestion(userQuizSession,chatId);
+						return UpdatesListener.CONFIRMED_UPDATES_ALL;
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			}
+		}
+
+		if (update.message() == null) {
 			return UpdatesListener.CONFIRMED_UPDATES_NONE;
 		}
 
@@ -49,19 +66,27 @@ public class BotUpdate implements UpdatesListener {
 				System.out.println(e.getMessage());
 				bot.execute(new SendMessage(chatId, BotConstants.ERROR_MESSAGE));
 			}
-		}
-
-		if (users.containsKey(chatId)) {
-			UserQuizSession userQuizSession = users.get(chatId);
-
-			if (userQuizSession.getQuizCounter() != 0) {
-				sendAnswer(messageText, userQuizSession, chatId);
-				userQuizSession.getNextQuestion();
-			}
-			sendQuestion(userQuizSession, chatId);
+			sendChoiceQuiz(chatId);
 		}
 
 		return UpdatesListener.CONFIRMED_UPDATES_ALL;
+	}
+
+	private InlineKeyboardMarkup buildInlineKeyboard(String[] keyboardButtonName) {
+		int keyboardButtonLength = keyboardButtonName.length;
+		List<InlineKeyboardButton[]> inlineKeyboardButtons = new ArrayList<>(keyboardButtonLength);
+		for (int i = 0; i < keyboardButtonLength; i++) {
+			InlineKeyboardButton[] row = new InlineKeyboardButton[]{new InlineKeyboardButton(keyboardButtonName[i]).callbackData(String.format("%d", i))};
+			inlineKeyboardButtons.add(row);
+		}
+
+		return new InlineKeyboardMarkup(inlineKeyboardButtons.toArray(new InlineKeyboardButton[][]{}));
+	}
+
+	private void sendChoiceQuiz(Long chatId) {
+		SendMessage choiceQuiz = new SendMessage(chatId, "Choose your quiz!");
+		choiceQuiz.replyMarkup(buildInlineKeyboard(readRepository.getAllQuizName()));
+		bot.execute(choiceQuiz);
 	}
 
 	private void sendAnswer(String telegramAnswer, UserQuizSession userQuizSession, Long chatId) {
@@ -91,31 +116,22 @@ public class BotUpdate implements UpdatesListener {
 		bot.execute(questionMessage);
 	}
 
-	private InlineKeyboardMarkup buildInlineKeyboard(String[] questionOptions) {
-		int optionsLength = questionOptions.length;
-		List<InlineKeyboardButton[]> keyboard = new ArrayList<>(optionsLength);
-		for (int i = 0; i < optionsLength; i++) {
-			InlineKeyboardButton[] row = new InlineKeyboardButton[]{
-							new InlineKeyboardButton(questionOptions[i]).callbackData(String.format("%d", i))
-			};
-			keyboard.add(row);
+	private int callbackHandler(Update update, UserQuizSession userQuizSession, Long chatId) {
+		String updateData = update.callbackQuery().data();
+		if (userQuizSession.isQuizMode()) {
+			sendAnswer(updateData, userQuizSession, chatId);
 		}
 
-		return new InlineKeyboardMarkup(keyboard.toArray(new InlineKeyboardButton[][]{}));
-	}
-
-	private int callbackHandler(Update update){
-
-		Long chatId = update.callbackQuery().from().id();
-		String updateData = update.callbackQuery().data();
-		if (users.containsKey(chatId)) {
-			UserQuizSession userQuizSession = users.get(chatId);
-			sendAnswer(updateData, userQuizSession, chatId);
-			userQuizSession.setQuizCounter(userQuizSession.getQuizCounter());
+		if (userQuizSession.isNextQuestionAvailable()) {
 			userQuizSession.getNextQuestion();
 			sendQuestion(userQuizSession, chatId);
-			return UpdatesListener.CONFIRMED_UPDATES_ALL;
 		}
-		return UpdatesListener.CONFIRMED_UPDATES_NONE;
+
+		if (userQuizSession.getQuizCounter() == userQuizSession.getQuizAmount()) {
+			userQuizSession.setQuizMode(false);
+			bot.execute(new SendMessage(chatId, "Введите /start что-бы перезапустить бота"));
+		}
+
+		return UpdatesListener.CONFIRMED_UPDATES_ALL;
 	}
 }

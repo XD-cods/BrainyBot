@@ -9,11 +9,20 @@ public class UserQuizSession {
 	private int quizAmount;
 	private Iterator<Question> questions;
 	private Question currentQuestion;
+	private boolean quizMode = false;
 
 	public UserQuizSession(Collection<Question> questions) {
 		this.questions = questions.iterator();
 		this.quizAmount = questions.size();
 		this.currentQuestion = this.questions.next();
+	}
+
+	public boolean isQuizMode() {
+		return quizMode;
+	}
+
+	public void setQuizMode(boolean quizMode) {
+		this.quizMode = quizMode;
 	}
 
 	public Question getCurrentQuestion() {
@@ -24,7 +33,7 @@ public class UserQuizSession {
 		currentQuestion = questions.next();
 	}
 
-	public boolean isNextQuestionAvailable(){
+	public boolean isNextQuestionAvailable() {
 		return questions.hasNext();
 	}
 
@@ -36,4 +45,8 @@ public class UserQuizSession {
 		this.quizCounter = quizCounter;
 	}
 
+	public int getQuizAmount() {
+		return quizAmount;
+	}
+	
 }
