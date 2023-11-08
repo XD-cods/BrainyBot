@@ -9,7 +9,7 @@ public class UserQuizSession {
 	private int quizAmount;
 	private Iterator<Question> questions;
 	private Question currentQuestion;
-	private boolean quizMode = false;
+	private boolean quizMode = true;
 
 	public UserQuizSession(Collection<Question> questions) {
 		this.questions = questions.iterator();
