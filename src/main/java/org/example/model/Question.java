@@ -10,31 +10,16 @@ public class Question {
 		return options;
 	}
 
-	public void setOptions(String[] options) {
-		this.options = options;
-	}
-
 	public String getQuestion() {
 		return question;
-	}
-
-	public void setQuestion(String question) {
-		this.question = question;
 	}
 
 	public int getAnswer() {
 		return answer;
 	}
 
-	public void setAnswer(int answer) {
-		this.answer = answer;
-	}
-
 	public String getAnswerDescription() {
 		return answerDescription;
 	}
 
-	public void setAnswerDescription(String answerDescription) {
-		this.answerDescription = answerDescription;
-	}
 }

@@ -4,6 +4,8 @@ import com.pengrad.telegrambot.ExceptionHandler;
 import com.pengrad.telegrambot.TelegramException;
 
 public class BotException implements ExceptionHandler {
+	public BotException() {
+	}
 
 	@Override
 	public void onException(TelegramException e) {
@@ -11,7 +13,7 @@ public class BotException implements ExceptionHandler {
 			e.response().errorCode();
 			e.response().description();
 		} else {
-			e.printStackTrace();
+			throw new RuntimeException("Don't access to bot", e);
 		}
 	}
 }

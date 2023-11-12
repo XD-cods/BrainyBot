@@ -5,48 +5,60 @@ import java.util.Iterator;
 
 public class UserQuizSession {
 
-	private int quizCounter = 0;
-	private int quizAmount;
-	private Iterator<Question> questions;
-	private Question currentQuestion;
-	private boolean quizMode = true;
+  private final int quizAmount;
+  private final Iterator<Question> questionIterator;
+  private Question currentQuestion;
+  private int quizCounter = 0;
+  private int rightAnswerCounter = 0;
+  private boolean quizMode = true;
 
-	public UserQuizSession(Collection<Question> questions) {
-		this.questions = questions.iterator();
-		this.quizAmount = questions.size();
-		this.currentQuestion = this.questions.next();
-	}
+  public UserQuizSession(Collection<Question> questions) {
+    this.questionIterator = questions.iterator();
+    this.quizAmount = questions.size();
+    this.currentQuestion = this.questionIterator.next();
+  }
 
-	public boolean isQuizMode() {
-		return quizMode;
-	}
+  public boolean isQuizMode() {
+    return quizMode;
+  }
 
-	public void setQuizMode(boolean quizMode) {
-		this.quizMode = quizMode;
-	}
+  public boolean isNextQuestionAvailable() {
+    return questionIterator.hasNext();
+  }
 
-	public Question getCurrentQuestion() {
-		return currentQuestion;
-	}
+  public void addRightCounter() {
+    rightAnswerCounter++;
+  }
 
-	public void getNextQuestion() {
-		currentQuestion = questions.next();
-	}
+  public void addQuizCounter() {
+    quizCounter++;
+  }
 
-	public boolean isNextQuestionAvailable() {
-		return questions.hasNext();
-	}
+  public void setQuizMode(boolean quizMode) {
+    this.quizMode = quizMode;
+  }
 
-	public int getQuizCounter() {
-		return quizCounter;
-	}
+  public Question getCurrentQuestion() {
+    return currentQuestion;
+  }
 
-	public void setQuizCounter(int quizCounter) {
-		this.quizCounter = quizCounter;
-	}
+  public void getNextQuestion() {
+    currentQuestion = questionIterator.next();
+  }
 
-	public int getQuizAmount() {
-		return quizAmount;
-	}
-	
+  public int getQuizCounter() {
+    return quizCounter;
+  }
+
+  public int getQuizAmount() {
+    return quizAmount;
+  }
+
+  public int getRightAnswerCounter() {
+    return rightAnswerCounter;
+  }
+
+  public int getWrongAnswerCounter(){
+    return quizAmount - rightAnswerCounter;
+  }
 }
