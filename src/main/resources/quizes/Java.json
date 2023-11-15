@@ -1,0 +1,112 @@
+[
+  {
+    "question": "What is the correct way to declare a variable in Java?",
+    "options": [
+      "variable myVar = 10;",
+      "let myVar = 10;",
+      "int myVar = 10;",
+      "var myVar = 10;"
+    ],
+    "answer": 2,
+    "answerDescription": "In Java, the correct way to declare an integer variable is by using the 'int' keyword. Option 'c' is the correct answer."
+  },
+  {
+    "question": "Which keyword is used to indicate that a method does not return any value in Java?",
+    "options": [
+      "void",
+      "null",
+      "none",
+      "nil"
+    ],
+    "answer": 0,
+    "answerDescription": "The 'void' keyword is used in Java to indicate that a method does not return any value. Option 'a' is the correct answer."
+  },
+  {
+    "question": "How do you create a new instance of a class in Java?",
+    "options": [
+      "MyClass obj = create MyClass();",
+      "MyClass obj = new MyClass();",
+      "new MyClass() = obj;",
+      "create MyClass obj;"
+    ],
+    "answer": 1,
+    "answerDescription": "To create a new instance of a class in Java, you use the 'new' keyword followed by the class constructor. Option 'b' is the correct answer."
+  },
+  {
+    "question": "Which access modifier is used for a variable that should be accessible only within its own class and not from outside the class in Java?",
+    "options": [
+      "private",
+      "protected",
+      "public",
+      "default"
+    ],
+    "answer": 0,
+    "answerDescription": "The 'private' access modifier is used for a variable that should be accessible only within its own class in Java. Option 'a' is the correct answer."
+  },
+  {
+    "question": "What is the purpose of the 'super' keyword in Java?",
+    "options": [
+      "To call the superclass constructor",
+      "To create a new instance of a class",
+      "To access a static variable",
+      "To define a constant"
+    ],
+    "answer": 0,
+    "answerDescription": "The 'super' keyword in Java is used to call the superclass constructor. Option 'a' is the correct answer."
+  },
+  {
+    "question": "Which loop is used for iterating over elements of an array or a collection in Java?",
+    "options": [
+      "for loop",
+      "while loop",
+      "do-while loop",
+      "foreach loop"
+    ],
+    "answer": 3,
+    "answerDescription": "The 'foreach' loop is used for iterating over elements of an array or a collection in Java. Option 'd' is the correct answer."
+  },
+  {
+    "question": "What is the purpose of the 'break' statement in Java?",
+    "options": [
+      "To terminate the program",
+      "To exit a loop or switch statement",
+      "To skip the next iteration of a loop",
+      "To jump to a specific label in the code"
+    ],
+    "answer": 1,
+    "answerDescription": "The 'break' statement in Java is used to exit a loop or switch statement prematurely. Option 'b' is the correct answer."
+  },
+  {
+    "question": "Which of the following is not a primitive data type in Java?",
+    "options": [
+      "int",
+      "float",
+      "char",
+      "class"
+    ],
+    "answer": 3,
+    "answerDescription": "In Java, 'class' is not a primitive data type. It is a reference data type. Option 'd' is the correct answer."
+  },
+  {
+    "question": "What is the purpose of the 'this' keyword in Java?",
+    "options": [
+      "To refer to the current instance of the class",
+      "To create a new instance of a class",
+      "To access a static method",
+      "To define a constant"
+    ],
+    "answer": 0,
+    "answerDescription": "The 'this' keyword in Java is used to refer to the current instance of the class. Option 'a' is the correct answer."
+  },
+  {
+    "question": "Which of the following exceptions is a checked exception in Java?",
+    "options": [
+      "NullPointerException",
+      "ArrayIndexOutOfBoundsException",
+      "ArithmeticException",
+      "IOException"
+    ],
+    "answer": 3,
+    "answerDescription": "IOException is a checked exception in Java. Option 'd' is the correct answer."
+  }
+]

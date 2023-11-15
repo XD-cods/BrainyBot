@@ -32,13 +32,11 @@ public class QuizRepository {
   }
 
   public Collection<Question> loadQuestions(int index) {
-    if (quizes == null) {
-      try (BufferedReader reader = new BufferedReader(Files.newBufferedReader(allQuizPath.get(index)))) {
-        Gson gson = new GsonBuilder().create();
-        quizes = Arrays.asList(gson.fromJson(reader, Question[].class));
-      } catch (IOException e) {
-        e.printStackTrace(System.out);
-      }
+    try (BufferedReader reader = new BufferedReader(Files.newBufferedReader(allQuizPath.get(index)))) {
+      Gson gson = new GsonBuilder().create();
+      quizes = Arrays.asList(gson.fromJson(reader, Question[].class));
+    } catch (IOException e) {
+      e.printStackTrace(System.out);
     }
     return quizes;
   }

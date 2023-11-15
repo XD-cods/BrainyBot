@@ -4,16 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3303dbdc-6474-4dbc-aaae-5f9d00046943" name="Changes" comment="Add removing keyboard after answer on the question">
+    <list default="true" id="3303dbdc-6474-4dbc-aaae-5f9d00046943" name="Changes" comment="Refactor answer message, added statistics in the end quiz">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/model/UserInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/quizes/Java.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/quizes/JavaScript.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/quizes/SQL.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/BotConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/BotConstants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/BotException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/BotException.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/QuizRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/QuizRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/Question.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/Question.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/UserQuizSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/UserQuizSession.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/quiz's/question.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/quizes/question.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/quizes/question.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/quizes/CSS.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +44,7 @@
   <component name="GithubPullRequestsUISettings">
     <option name="selectedUrlAndAccountId">
       <UrlAndAccount>
-        <option name="accountId" value="a27878c1-9685-4d60-92aa-f6847e270673" />
+        <option name="accountId" value="a7821a41-78b3-41a3-b37a-e8cc301b9ef1" />
         <option name="url" value="https://github.com/XD-cods/knowBot.git" />
       </UrlAndAccount>
     </option>
@@ -72,11 +72,14 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/vlad&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/vlad/IdeaProjects/knowBot/src/main/resources/quizes&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Java&quot;
   }
 }</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources/quizes" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/resources/quizes" />
       <recent name="$PROJECT_DIR$/quiz" />
@@ -136,7 +139,15 @@
       <option name="project" value="LOCAL" />
       <updated>1699466758647</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Refactor answer message, added statistics in the end quiz">
+      <option name="closed" value="true" />
+      <created>1699807317129</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1699807317129</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -166,7 +177,8 @@
     <MESSAGE value="create project" />
     <MESSAGE value="&quot;Create folder for model question and user state. Replace lambda in main class on BotUpdate, BotException. Create class QuizReadRepository and BotConstats. Replace replyKeybord on inlineKeyboard, removed class Service, added method in BotUpdate from Service and added 2 methods: callbackHandler, buildInlineKeyboard&quot;" />
     <MESSAGE value="Add removing keyboard after answer on the question" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add removing keyboard after answer on the question" />
+    <MESSAGE value="Refactor answer message, added statistics in the end quiz" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor answer message, added statistics in the end quiz" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

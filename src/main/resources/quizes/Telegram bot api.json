@@ -1,0 +1,57 @@
+[
+  {
+    "question": "What is the primary programming language used to interact with the Telegram Bot API?",
+    "options": [
+      "Python",
+      "JavaScript",
+      "Java",
+      "C#"
+    ],
+    "answer": 0,
+    "answerDescription": "Python is commonly used to interact with the Telegram Bot API, thanks to libraries such as python-telegram-bot. Option 'a' is the correct answer."
+  },
+  {
+    "question": "Which type of messages can a Telegram bot receive?",
+    "options": [
+      "Text messages only",
+      "Text and multimedia messages",
+      "Multimedia messages only",
+      "Binary messages"
+    ],
+    "answer": 1,
+    "answerDescription": "Telegram bots can receive both text and multimedia messages, including images, audio, video, and documents. Option 'b' is the correct answer."
+  },
+  {
+    "question": "What is a webhook in the context of the Telegram Bot API?",
+    "options": [
+      "A method for sending messages to users",
+      "A mechanism for handling user authentication",
+      "A way for a bot to receive updates by providing a URL endpoint",
+      "A special type of chat in Telegram"
+    ],
+    "answer": 2,
+    "answerDescription": "In the Telegram Bot API, a webhook is a way for a bot to receive updates by providing a URL endpoint that Telegram will send new messages and other events to. Option 'c' is the correct answer."
+  },
+  {
+    "question": "What is the purpose of the 'sendMessage' method in the Telegram Bot API?",
+    "options": [
+      "To receive messages from users",
+      "To send messages to users",
+      "To update a bot's profile information",
+      "To delete messages"
+    ],
+    "answer": 1,
+    "answerDescription": "The 'sendMessage' method in the Telegram Bot API is used to send messages from a bot to users. Option 'b' is the correct answer."
+  },
+  {
+    "question": "What is the Bot API token, and why is it important?",
+    "options": [
+      "It is a unique identifier for a user in Telegram",
+      "It is a unique identifier for a Telegram bot",
+      "It is used for encrypting messages sent by a bot",
+      "It is required for accessing the Telegram API documentation"
+    ],
+    "answer": 1,
+    "answerDescription": "The Bot API token is a unique identifier for a Telegram bot, and it is crucial for authenticating and authorizing the bot to interact with the Telegram API. Option 'b' is the correct answer."
+  }
+]

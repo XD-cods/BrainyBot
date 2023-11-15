@@ -1,0 +1,112 @@
+[
+  {
+    "question": "How do you select an element with the id 'example' in CSS?",
+    "options": [
+      "#example",
+      ".example",
+      "element.example",
+      "id.example"
+    ],
+    "answer": 0,
+    "answerDescription": "In CSS, the '#' symbol is used to select an element with a specific id. Option 'a' is the correct answer."
+  },
+  {
+    "question": "What property is used to change the text color of an element in CSS?",
+    "options": [
+      "text-color",
+      "color",
+      "font-color",
+      "text-style"
+    ],
+    "answer": 1,
+    "answerDescription": "The 'color' property is used to change the text color of an element in CSS. Option 'b' is the correct answer."
+  },
+  {
+    "question": "Which CSS property is used to control the spacing between elements?",
+    "options": [
+      "margin",
+      "padding",
+      "spacing",
+      "border-spacing"
+    ],
+    "answer": 0,
+    "answerDescription": "The 'margin' property is used to control the spacing outside the border of an element in CSS. Option 'a' is the correct answer."
+  },
+  {
+    "question": "How can you make a list item's marker appear outside its box in CSS?",
+    "options": [
+      "marker-position: outside;",
+      "list-style-position: outside;",
+      "marker-outside: true;",
+      "list-marker-outside: true;"
+    ],
+    "answer": 1,
+    "answerDescription": "The 'list-style-position: outside;' property is used to make a list item's marker appear outside its box in CSS. Option 'b' is the correct answer."
+  },
+  {
+    "question": "Which property is used to set the background color of an element in CSS?",
+    "options": [
+      "background-color",
+      "color",
+      "bgcolor",
+      "background"
+    ],
+    "answer": 0,
+    "answerDescription": "The 'background-color' property is used to set the background color of an element in CSS. Option 'a' is the correct answer."
+  },
+  {
+    "question": "In CSS, how do you make a text bold?",
+    "options": [
+      "text-style: bold;",
+      "font-weight: bold;",
+      "bold: true;",
+      "text-bold: true;"
+    ],
+    "answer": 1,
+    "answerDescription": "The 'font-weight: bold;' property is used to make text bold in CSS. Option 'b' is the correct answer."
+  },
+  {
+    "question": "What does the 'box-sizing' property in CSS control?",
+    "options": [
+      "Element visibility",
+      "Element positioning",
+      "Element sizing",
+      "Element rotation"
+    ],
+    "answer": 2,
+    "answerDescription": "The 'box-sizing' property in CSS controls how the sizing of an element is calculated, including or excluding padding and borders. Option 'c' is the correct answer."
+  },
+  {
+    "question": "Which CSS pseudo-class is used to select and style the last child element of a parent?",
+    "options": [
+      ":last",
+      ":last-child",
+      ":nth-child(last)",
+      ":end-child"
+    ],
+    "answer": 1,
+    "answerDescription": "The ':last-child' pseudo-class is used to select and style the last child element of a parent in CSS. Option 'b' is the correct answer."
+  },
+  {
+    "question": "What is the purpose of the 'z-index' property in CSS?",
+    "options": [
+      "To control the transparency of an element",
+      "To control the stacking order of elements",
+      "To control the rotation of an element",
+      "To control the zoom level of an element"
+    ],
+    "answer": 1,
+    "answerDescription": "The 'z-index' property in CSS is used to control the stacking order of elements, determining which elements appear on top. Option 'b' is the correct answer."
+  },
+  {
+    "question": "Which CSS property is used to create rounded corners for an element?",
+    "options": [
+      "border-radius",
+      "corner-radius",
+      "rounded-corners",
+      "border-style"
+    ],
+    "answer": 0,
+    "answerDescription": "The 'border-radius' property is used to create rounded corners for an element in CSS. Option 'a' is the correct answer."
+  }
+]

@@ -11,6 +11,7 @@ import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.EditMessageText;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.example.model.Question;
+import org.example.model.UserInfo;
 import org.example.model.UserQuizSession;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.Map;
 public class BotUpdate implements UpdatesListener {
 
   private final TelegramBot bot;
-  private final Map<Long, UserQuizSession> users = new HashMap<>();
+  private final Map<Long, UserInfo> users = new HashMap<>();
   private final QuizRepository readRepository;
 
   public BotUpdate(TelegramBot bot, QuizRepository readRepository) {
@@ -34,12 +35,22 @@ public class BotUpdate implements UpdatesListener {
     Update update = updates.get(updates.size() - 1);
     if (update.callbackQuery() != null) {
       Long chatId = update.callbackQuery().from().id();
-      if (users.containsKey(chatId)) {
-        UserQuizSession userQuizSession = users.get(chatId);
-        callbackHandler(update, userQuizSession, chatId);
+      if (!isRegisterUser(chatId)) {
+        bot.execute(new SendMessage(chatId, "Input /start"));
+        return UpdatesListener.CONFIRMED_UPDATES_ALL;
       }
+
+      UserInfo userInfo = users.get(chatId);
+
+      if (userInfo.isChoiceQuiz()) {
+        choiceQuiz(update, userInfo, chatId);
+      } else {
+        callbackHandler(update, chatId, userInfo);
+      }
+
       return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
+
     if (update.message() == null) {
       return UpdatesListener.CONFIRMED_UPDATES_NONE;
     }
@@ -48,16 +59,46 @@ public class BotUpdate implements UpdatesListener {
     Long chatId = message.chat().id();
     String messageText = message.text();
 
-    if (messageText.equals(BotConstants.START_COMMAND)) {
-      bot.execute(new SendMessage(chatId, BotConstants.STARTING_MESSAGE));
-      users.put(chatId, new UserQuizSession(readRepository.loadQuestions(0)));
-      sendQuestion(users.get(chatId), chatId);
+    switch (messageText) {
+      case BotConstants.START_COMMAND -> {
+        int quizIndex;
+        if (isRegisterUser(chatId)) {
+          quizIndex = users.get(chatId).getQuizIndex();
+        } else {
+          quizIndex = 0;
+        }
+
+        bot.execute(new SendMessage(chatId, BotConstants.STARTING_MESSAGE));
+        UserQuizSession userQuizSession = new UserQuizSession(readRepository.loadQuestions(quizIndex));
+        users.put(chatId, new UserInfo(userQuizSession));
+        sendQuestion(userQuizSession, chatId);
+        break;
+      }
+      case BotConstants.CHOICE_COMMAND -> {
+        if (!isRegisterUser(chatId)) {
+          bot.execute(new SendMessage(chatId, "Input /start"));
+          return UpdatesListener.CONFIRMED_UPDATES_ALL;
+        }
+        sendChoiceQuiz(chatId);
+        break;
+      }
     }
 
     return UpdatesListener.CONFIRMED_UPDATES_ALL;
   }
 
+  private void choiceQuiz(Update update, UserInfo userInfo, Long chatId) {
+    int quizIndex = Integer.parseInt(update.callbackQuery().data());
+    UserQuizSession userQuizSession = new UserQuizSession(readRepository.loadQuestions(quizIndex));
+    userInfo.setQuizIndex(quizIndex);
+    userInfo.setChoiceQuiz(false);
+    userInfo.setUserQuizSession(userQuizSession);
+    sendQuestion(userQuizSession, chatId);
+    clearKeyboard(update, chatId);
+  }
+
   private void sendChoiceQuiz(Long chatId) {
+    users.get(chatId).setChoiceQuiz(true);
     SendMessage choiceQuiz = new SendMessage(chatId, "Choose your quiz!");
     choiceQuiz.replyMarkup(buildInlineKeyboard(readRepository.getAllQuizName()));
     bot.execute(choiceQuiz);
@@ -104,7 +145,8 @@ public class BotUpdate implements UpdatesListener {
     bot.execute(new SendMessage(chatId, statMessage).parseMode(ParseMode.HTML));
   }
 
-  private void callbackHandler(Update update, UserQuizSession userQuizSession, Long chatId) {
+  private void callbackHandler(Update update, Long chatId, UserInfo userInfo) {
+    UserQuizSession userQuizSession = userInfo.getUserQuizSession();
     String updateData = update.callbackQuery().data();
     if (userQuizSession.isQuizMode()) {
       sendAnswer(updateData, userQuizSession, chatId);
@@ -114,11 +156,6 @@ public class BotUpdate implements UpdatesListener {
     if (userQuizSession.getQuizCounter() == userQuizSession.getQuizAmount()) {
       userQuizSession.setQuizMode(false);
       sendQuizStats(userQuizSession, chatId);
-      try {
-        Thread.sleep(100);
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
       bot.execute(new SendMessage(chatId, "Input /start to reset bot"));
     }
 
@@ -149,5 +186,9 @@ public class BotUpdate implements UpdatesListener {
     EditMessageText editMessage = new EditMessageText(chatId, message.messageId(), message.text());
     editMessage.replyMarkup(new InlineKeyboardMarkup(new InlineKeyboardButton("").callbackData("deleted")));
     bot.execute(editMessage);
+  }
+
+  private boolean isRegisterUser(Long chatId) {
+    return users.containsKey(chatId);
   }
 }
