@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.Keyboard;
@@ -14,6 +15,7 @@ import org.example.model.Question;
 import org.example.model.UserInfo;
 import org.example.model.UserQuizSession;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,80 +38,111 @@ public class BotUpdate implements UpdatesListener {
     if (update.callbackQuery() != null) {
       Long chatId = update.callbackQuery().from().id();
       if (!isRegisterUser(chatId)) {
+        clearKeyboard(update, chatId);
         bot.execute(new SendMessage(chatId, "Input /start"));
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
       }
 
       UserInfo userInfo = users.get(chatId);
-
       if (userInfo.isChoiceQuiz()) {
         choiceQuiz(update, userInfo, chatId);
-      } else {
-        callbackHandler(update, chatId, userInfo);
+        return UpdatesListener.CONFIRMED_UPDATES_ALL;
+      } else if (userInfo.getUserQuizSession() == null) {
+        bot.execute(new SendMessage(chatId, "Input /start_quiz for start/restart quiz or for choice quiz /choice"));
+        return UpdatesListener.CONFIRMED_UPDATES_ALL;
       }
 
+      callbackHandler(update, userInfo, chatId);
       return UpdatesListener.CONFIRMED_UPDATES_ALL;
-    }
-
-    if (update.message() == null) {
+    } else if (update.message() == null) {
       return UpdatesListener.CONFIRMED_UPDATES_NONE;
     }
 
     Message message = update.message();
     Long chatId = message.chat().id();
     String messageText = message.text();
+    UserInfo userInfo = null;
+    UserQuizSession userQuizSession = null;
+
+    if (isRegisterUser(chatId)) {
+      userInfo = users.get(chatId);
+      userQuizSession = userInfo.getUserQuizSession();
+    }
 
     switch (messageText) {
+      case BotConstants.REGISTER_COMMAND -> {
+        if (userInfo != null) {
+          break;
+        }
+        bot.execute(new SendMessage(chatId, BotConstants.STARTING_MESSAGE));
+        userInfo = new UserInfo();
+        users.put(chatId, userInfo);
+        break;
+      }
+
       case BotConstants.START_COMMAND -> {
-        int quizIndex;
-        if (isRegisterUser(chatId)) {
-          quizIndex = users.get(chatId).getQuizIndex();
-        } else {
-          quizIndex = 0;
+        if (userInfo == null) {
+          bot.execute(new SendMessage(chatId, "Input /start"));
+          break;
+        } else if (userQuizSession != null && userQuizSession.isQuizMode()) {
+          bot.execute(new SendMessage(chatId, "End your quiz"));
+          break;
         }
 
-        bot.execute(new SendMessage(chatId, BotConstants.STARTING_MESSAGE));
-        UserQuizSession userQuizSession = new UserQuizSession(readRepository.loadQuestions(quizIndex));
-        users.put(chatId, new UserInfo(userQuizSession));
+        int quizIndex = userInfo.getQuizIndex();
+        userQuizSession = new UserQuizSession(readRepository.loadQuestions(quizIndex, chatId));
+        userInfo.setUserQuizSession(userQuizSession);
+        bot.execute(new SendMessage(chatId, "Quiz: " + readRepository.getQuizName(quizIndex)));
         sendQuestion(userQuizSession, chatId);
         break;
       }
+
       case BotConstants.CHOICE_COMMAND -> {
-        if (!isRegisterUser(chatId)) {
+        if (userInfo == null) {
           bot.execute(new SendMessage(chatId, "Input /start"));
-          return UpdatesListener.CONFIRMED_UPDATES_ALL;
+          break;
+        } else if (userQuizSession != null && userQuizSession.isQuizMode()) {
+          bot.execute(new SendMessage(chatId, "End your quiz"));
+          break;
         }
         sendChoiceQuiz(chatId);
         break;
       }
     }
-
     return UpdatesListener.CONFIRMED_UPDATES_ALL;
   }
 
   private void choiceQuiz(Update update, UserInfo userInfo, Long chatId) {
     int quizIndex = Integer.parseInt(update.callbackQuery().data());
-    UserQuizSession userQuizSession = new UserQuizSession(readRepository.loadQuestions(quizIndex));
     userInfo.setQuizIndex(quizIndex);
     userInfo.setChoiceQuiz(false);
-    userInfo.setUserQuizSession(userQuizSession);
-    sendQuestion(userQuizSession, chatId);
+    bot.execute(new SendMessage(chatId, "Input /start_quiz"));
     clearKeyboard(update, chatId);
   }
 
   private void sendChoiceQuiz(Long chatId) {
     users.get(chatId).setChoiceQuiz(true);
-    SendMessage choiceQuiz = new SendMessage(chatId, "Choose your quiz!");
-    choiceQuiz.replyMarkup(buildInlineKeyboard(readRepository.getAllQuizName()));
+    String choiceQuizText = "Choose your quiz!";
+    String[] allQuizName = readRepository.getAllQuizName();
+    for (int i = 0; i < allQuizName.length; i++) {
+      choiceQuizText += String.format("\n%d. %s", i + 1, allQuizName[i]);
+    }
+    SendMessage choiceQuiz = new SendMessage(chatId, choiceQuizText);
+    Keyboard keyboard = buildInlineKeyboard(readRepository.getAllQuizName().length);
+    choiceQuiz.replyMarkup(keyboard);
     bot.execute(choiceQuiz);
   }
 
   private void sendQuestion(UserQuizSession userQuizSession, Long chatId) {
     Question question = userQuizSession.getCurrentQuestion();
-    int quizCounter = userQuizSession.getQuizCounter();
+    int quizCounter = userQuizSession.getQuizCounter() + 1;
     String[] questionOptions = question.getOptions();
-    Keyboard inlineKeyboardMarkup = buildInlineKeyboard(questionOptions);
-    SendMessage questionMessage = new SendMessage(chatId, String.format("❓ Question: %d\n%s", quizCounter + 1, question.getQuestion()));
+    Keyboard inlineKeyboardMarkup = buildInlineKeyboard(questionOptions.length);
+    String questionTextMessage = String.format("❓ Question: %d\n%s\n", quizCounter, question.getQuestion());
+    for (int i = 0; i < questionOptions.length; i++) {
+      questionTextMessage += String.format("\n%d. %s", i + 1, questionOptions[i]);
+    }
+    SendMessage questionMessage = new SendMessage(chatId, questionTextMessage);
     questionMessage.replyMarkup(inlineKeyboardMarkup);
     bot.execute(questionMessage);
   }
@@ -145,7 +178,7 @@ public class BotUpdate implements UpdatesListener {
     bot.execute(new SendMessage(chatId, statMessage).parseMode(ParseMode.HTML));
   }
 
-  private void callbackHandler(Update update, Long chatId, UserInfo userInfo) {
+  private void callbackHandler(Update update, UserInfo userInfo, Long chatId) {
     UserQuizSession userQuizSession = userInfo.getUserQuizSession();
     String updateData = update.callbackQuery().data();
     if (userQuizSession.isQuizMode()) {
@@ -156,7 +189,7 @@ public class BotUpdate implements UpdatesListener {
     if (userQuizSession.getQuizCounter() == userQuizSession.getQuizAmount()) {
       userQuizSession.setQuizMode(false);
       sendQuizStats(userQuizSession, chatId);
-      bot.execute(new SendMessage(chatId, "Input /start to reset bot"));
+      bot.execute(new SendMessage(chatId, "Input /start_quiz to reset bot or chose quiz another quiz /choice"));
     }
 
     if (userQuizSession.isNextQuestionAvailable()) {
@@ -170,14 +203,20 @@ public class BotUpdate implements UpdatesListener {
     }
   }
 
-  private InlineKeyboardMarkup buildInlineKeyboard(String[] keyboardButtonName) {
-    int keyboardButtonLength = keyboardButtonName.length;
-    List<InlineKeyboardButton[]> inlineKeyboardButtons = new ArrayList<>(keyboardButtonLength);
-    for (int i = 0; i < keyboardButtonLength; i++) {
-      InlineKeyboardButton[] row = new InlineKeyboardButton[]{new InlineKeyboardButton(keyboardButtonName[i]).callbackData(String.format("%d", i))};
-      inlineKeyboardButtons.add(row);
+  private InlineKeyboardMarkup buildInlineKeyboard(int keyboardLength) {
+    List<InlineKeyboardButton[]> inlineKeyboardButtons = new ArrayList<>();
+    int column = 0;
+    List<InlineKeyboardButton> rows = new ArrayList<>();
+    for (int i = 0; i < keyboardLength; i++) {
+      if (i % 2 == 0) {
+        column = 0;
+        inlineKeyboardButtons.add(rows.toArray(new InlineKeyboardButton[]{}));
+        rows = new ArrayList<>();
+      }
+      rows.add(new InlineKeyboardButton(String.valueOf(i + 1)).callbackData(String.valueOf(i)));
+      column++;
     }
-
+    inlineKeyboardButtons.add(rows.toArray(new InlineKeyboardButton[]{}));
     return new InlineKeyboardMarkup(inlineKeyboardButtons.toArray(new InlineKeyboardButton[][]{}));
   }
 

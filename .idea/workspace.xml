@@ -4,16 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3303dbdc-6474-4dbc-aaae-5f9d00046943" name="Changes" comment="Refactor answer message, added statistics in the end quiz">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/model/UserInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/quizes/Java.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/quizes/JavaScript.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/quizes/SQL.json" afterDir="false" />
+    <list default="true" id="3303dbdc-6474-4dbc-aaae-5f9d00046943" name="Changes" comment="Added model for storage base info about user (UserInfo) and added function for choice quiz">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/BotConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/BotConstants.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/QuizRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/QuizRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/quizes/question.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/quizes/CSS.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/UserInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/UserInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/quizes/HTML.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/quizes/Telegram bot api.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/quizes/Telegram bot api.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -147,7 +146,15 @@
       <option name="project" value="LOCAL" />
       <updated>1699807317129</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Added model for storage base info about user (UserInfo) and added function for choice quiz">
+      <option name="closed" value="true" />
+      <created>1700063559545</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1700063559545</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -178,7 +185,8 @@
     <MESSAGE value="&quot;Create folder for model question and user state. Replace lambda in main class on BotUpdate, BotException. Create class QuizReadRepository and BotConstats. Replace replyKeybord on inlineKeyboard, removed class Service, added method in BotUpdate from Service and added 2 methods: callbackHandler, buildInlineKeyboard&quot;" />
     <MESSAGE value="Add removing keyboard after answer on the question" />
     <MESSAGE value="Refactor answer message, added statistics in the end quiz" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor answer message, added statistics in the end quiz" />
+    <MESSAGE value="Added model for storage base info about user (UserInfo) and added function for choice quiz" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added model for storage base info about user (UserInfo) and added function for choice quiz" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

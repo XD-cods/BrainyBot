@@ -9,7 +9,7 @@ import com.pengrad.telegrambot.*;
 public class Main {
   public static void main(String[] args) throws NullPointerException, IOException {
     TelegramBot bot = new TelegramBot(loadToken());
-    QuizRepository readRepository = new QuizRepository("src/main/resources/quizes");
+    QuizRepository readRepository = new QuizRepository("src/main/resources/quizes", bot);
     BotUpdate listener = new BotUpdate(bot, readRepository);
     BotException exception = new BotException();
     bot.setUpdatesListener(listener, exception);

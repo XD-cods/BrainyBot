@@ -2,7 +2,7 @@ package org.example.model;
 
 public class UserInfo {
   private boolean choiceQuiz = false;
-  private UserQuizSession userQuizSession;
+  private UserQuizSession userQuizSession = null;
   private int quizIndex = 0;
 
   public int getQuizIndex() {
@@ -11,10 +11,6 @@ public class UserInfo {
 
   public void setQuizIndex(int quizIndex) {
     this.quizIndex = quizIndex;
-  }
-
-  public UserInfo(UserQuizSession userQuizSession) {
-    this.userQuizSession = userQuizSession;
   }
 
   public boolean isChoiceQuiz() {
