@@ -3,17 +3,17 @@ package org.example.model;
 public class UserInfo {
   private boolean choiceQuiz = false;
   private UserQuizSession userQuizSession = null;
-  private int quizIndex = 0;
+  private String currentTopicName;
 
-  public int getQuizIndex() {
-    return quizIndex;
+  public String getCurrentTopicName() {
+    return currentTopicName;
   }
 
-  public void setQuizIndex(int quizIndex) {
-    this.quizIndex = quizIndex;
+  public void setCurrentTopicName(String currentTopicName) {
+    this.currentTopicName = currentTopicName;
   }
 
-  public boolean isChoiceQuiz() {
+  public boolean isTopicChosen() {
     return choiceQuiz;
   }
 

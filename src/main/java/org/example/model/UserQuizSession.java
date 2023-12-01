@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 public class UserQuizSession {
 
-  private final int quizAmount;
+  private final int questionAmount;
   private final Iterator<Question> questionIterator;
   private Question currentQuestion;
   private int quizCounter = 0;
@@ -14,8 +14,8 @@ public class UserQuizSession {
 
   public UserQuizSession(Collection<Question> questions) {
     this.questionIterator = questions.iterator();
-    this.quizAmount = questions.size();
-    this.currentQuestion = this.questionIterator.next();
+    this.questionAmount = questions.size();
+//    this.currentQuestion = this.questionIterator.next();
   }
 
   public boolean isQuizMode() {
@@ -42,23 +42,20 @@ public class UserQuizSession {
     return currentQuestion;
   }
 
-  public void getNextQuestion() {
-    currentQuestion = questionIterator.next();
+  public Question getNextQuestion() {
+    quizCounter++;
+    return currentQuestion = questionIterator.next();
   }
 
   public int getQuizCounter() {
     return quizCounter;
   }
 
-  public int getQuizAmount() {
-    return quizAmount;
+  public int getQuestionAmount() {
+    return questionAmount;
   }
 
   public int getRightAnswerCounter() {
     return rightAnswerCounter;
-  }
-
-  public int getWrongAnswerCounter(){
-    return quizAmount - rightAnswerCounter;
   }
 }

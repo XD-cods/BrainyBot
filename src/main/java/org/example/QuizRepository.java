@@ -2,8 +2,8 @@ package org.example;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.request.SendMessage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.example.model.Question;
 
 import java.io.BufferedReader;
@@ -11,46 +11,42 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class QuizRepository {
-  private Collection<Question> quizes;
-  private final List<Path> allQuizPath = new ArrayList<>();
-  private final List<String> allQuizName = new ArrayList<>();
-  private final TelegramBot bot;
-
-  public QuizRepository(String jsonPath, TelegramBot bot) {
+  private final Map<String, Path> quizesTopics = new HashMap<>();
+  private static final Logger logger =  LogManager.getLogger(QuizRepository.class);
+  public QuizRepository(String jsonPath) {
     try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Path.of(jsonPath))) {
       for (Path path : directoryStream) {
-        allQuizPath.add(path);
         String fileName = path.getFileName().toString();
-        allQuizName.add(fileName.substring(0, fileName.indexOf(".json")));
+        String topicName = fileName.substring(0, fileName.indexOf(".json"));
+        quizesTopics.put(topicName, path);
       }
     } catch (IOException e) {
       throw new RuntimeException("Unable to read quizes", e);
     }
-    this.bot = bot;
   }
 
-  public Collection<Question> loadQuestions(int index, Long chatId) {
-    try (BufferedReader reader = new BufferedReader(Files.newBufferedReader(allQuizPath.get(index)))) {
-      Gson gson = new GsonBuilder().create();
-      quizes = Arrays.asList(gson.fromJson(reader, Question[].class));
-    } catch (IOException e) {
-      bot.execute(new SendMessage(chatId, BotConstants.ERROR_MESSAGE));
-      throw new RuntimeException("Unable to load quiz", e);
+  public Collection<Question> loadQuestions(String topicName) {
+    if (!quizesTopics.containsKey(topicName)) {
+      return List.of();
     }
-    return quizes;
+    try (BufferedReader reader = new BufferedReader(Files.newBufferedReader(quizesTopics.get(topicName)))) {
+      Gson gson = new GsonBuilder().create();
+      return Arrays.asList(gson.fromJson(reader, Question[].class));
+    } catch (IOException e) {
+      logger.error("Error appeared while loading quiz");
+      return List.of();
+    }
   }
 
-  public String[] getAllQuizName() {
-    return allQuizName.toArray(new String[]{});
+  public String[] getAllTopicNames() {
+    return quizesTopics.keySet().toArray(new String[]{});
   }
 
-  public String getQuizName(int index) {
-    return allQuizName.get(index);
-  }
 }

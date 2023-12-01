@@ -1,17 +1,18 @@
 package org.example;
 
+import com.pengrad.telegrambot.TelegramBot;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import com.pengrad.telegrambot.*;
 
 public class Main {
   public static void main(String[] args) throws NullPointerException, IOException {
     TelegramBot bot = new TelegramBot(loadToken());
-    QuizRepository readRepository = new QuizRepository("src/main/resources/quizes", bot);
+    QuizRepository readRepository = new QuizRepository("src/main/resources/quizes");
     BotUpdate listener = new BotUpdate(bot, readRepository);
-    BotException exception = new BotException();
+    QuizBotExceptionHandler exception = new QuizBotExceptionHandler();
     bot.setUpdatesListener(listener, exception);
   }
 
