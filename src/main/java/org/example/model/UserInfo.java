@@ -1,9 +1,14 @@
+
+
 package org.example.model;
+
+import com.pengrad.telegrambot.model.Message;
 
 public class UserInfo {
   private boolean choiceQuiz = false;
   private UserQuizSession userQuizSession = null;
   private String currentTopicName;
+  private Message lastBotMessage = null;
 
   public String getCurrentTopicName() {
     return currentTopicName;
@@ -27,5 +32,13 @@ public class UserInfo {
 
   public void setUserQuizSession(UserQuizSession userQuizSession) {
     this.userQuizSession = userQuizSession;
+  }
+
+  public Message getLastBotMessage() {
+    return lastBotMessage;
+  }
+
+  public void setLastBotMessage(Message lastBotMessage) {
+    this.lastBotMessage = lastBotMessage;
   }
 }

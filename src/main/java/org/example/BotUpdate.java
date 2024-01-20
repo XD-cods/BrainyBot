@@ -11,8 +11,6 @@ import com.pengrad.telegrambot.model.request.Keyboard;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.EditMessageText;
 import com.pengrad.telegrambot.request.SendMessage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.example.model.Question;
 import org.example.model.UserInfo;
 import org.example.model.UserQuizSession;
@@ -94,6 +92,16 @@ public class BotUpdate implements UpdatesListener {
         bot.execute(new SendMessage(chatId, "Quiz: " + userInfo.getCurrentTopicName()));
         sendQuestion(chatId);
       }
+      case BotConstants.CANCEL_QUIZ_COMMAND -> {
+        UserInfo userInfo = users.get(chatId);
+        UserQuizSession userQuizSession = userInfo.getUserQuizSession();
+        if (userQuizSession == null) {
+          bot.execute(new SendMessage(chatId, "You didn't start the quiz"));
+          break;
+        }
+        clearLastMessageKeyboard(chatId);
+        sendStatsCanceledQuiz(chatId);
+      }
     }
     return UpdatesListener.CONFIRMED_UPDATES_ALL;
   }
@@ -105,7 +113,7 @@ public class BotUpdate implements UpdatesListener {
     SendMessage choiceQuiz = new SendMessage(chatId, "Choose your quiz!");
     Keyboard keyboard = buildTopicChoiceKeyboard();
     choiceQuiz.replyMarkup(keyboard);
-    bot.execute(choiceQuiz);
+    users.get(chatId).setLastBotMessage(bot.execute(choiceQuiz).message());
   }
 
   private void sendQuestion(Long chatId) {
@@ -114,33 +122,49 @@ public class BotUpdate implements UpdatesListener {
     String[] questionOptions = question.getOptions();
     Keyboard inlineKeyboardMarkup = buildInlineKeyboard(questionOptions.length);
     StringBuilder questionTextMessage = new StringBuilder(String.format("❓ Question: %d\n%s\n",
-        userQuizSession.getQuizCounter(), question.getQuestion()));
+            userQuizSession.getQuestionCounter(), question.getQuestion()));
     for (int i = 0; i < questionOptions.length; i++) {
       questionTextMessage.append(String.format("\n%d. %s", i + 1, questionOptions[i]));
     }
 
     SendMessage questionMessage = new SendMessage(chatId, questionTextMessage.toString());
     questionMessage.replyMarkup(inlineKeyboardMarkup);
-    bot.execute(questionMessage);
+    users.get(chatId).setLastBotMessage(bot.execute(questionMessage).message());
   }
 
   private void sendAnswer(CallbackQuery callbackQuery, Long chatId) {
-    clearKeyboard(callbackQuery, chatId);
+    clearLastMessageKeyboard(chatId);
     int userAnswerNum = Integer.parseInt(callbackQuery.data());
     UserQuizSession userQuizSession = users.get(chatId).getUserQuizSession();
     String answerText = getAnswerText(userQuizSession, userAnswerNum);
-    bot.execute(new SendMessage(chatId, answerText).parseMode(ParseMode.HTML));
+    SendMessage answerMessage = new SendMessage(chatId, answerText).parseMode(ParseMode.HTML);
+    users.get(chatId).setLastBotMessage(bot.execute(answerMessage).message());
   }
 
   private void sendQuizStats(Long chatId) {
     UserQuizSession userQuizSession = users.get(chatId).getUserQuizSession();
     int quizAmount = userQuizSession.getQuestionAmount();
     int rightAnswerCounter = userQuizSession.getRightAnswerCounter();
-    String statMessage = String.format("❓ <b>Question number:</b> %d\n\n✅ <b>Right answers:</b> %d\\%d\n\n",
-        quizAmount, rightAnswerCounter, quizAmount);
-    statMessage += "Input /start_quiz to reset bot or chose quiz another quiz /choice";
+    String statMessageText = String.format("❓ <b>Question number:</b> %d\n\n✅ <b>Right answers:</b> %d\\%d\n\n",
+            quizAmount, rightAnswerCounter, quizAmount);
+    statMessageText += "Input /start_quiz to reset bot or chose quiz another quiz /choice";
     userQuizSession.setQuizMode(false);
-    bot.execute(new SendMessage(chatId, statMessage).parseMode(ParseMode.HTML));
+    SendMessage statMessage = new SendMessage(chatId, statMessageText).parseMode(ParseMode.HTML);
+    bot.execute(statMessage);
+    users.get(chatId).setLastBotMessage(bot.execute(statMessage).message());
+    users.get(chatId).setUserQuizSession(null);
+  }
+
+  private void sendStatsCanceledQuiz(Long chatId){
+    UserQuizSession userQuizSession = users.get(chatId).getUserQuizSession();
+    int questionCount = userQuizSession.getQuestionCounter();
+    int rightAnswerCounter = userQuizSession.getRightAnswerCounter();
+    String statMessageText = String.format("❓<b>You canceled quiz</b>\n\n<b>The questions were:</b> %d\n\n✅ <b>Right answers:</b> %d\\%d\n\n",
+            questionCount, rightAnswerCounter, questionCount);
+    statMessageText += "Input /start_quiz to reset bot or chose quiz another quiz /choice";
+    userQuizSession.setQuizMode(false);
+    SendMessage statMessage = new SendMessage(chatId, statMessageText).parseMode(ParseMode.HTML);
+    users.get(chatId).setLastBotMessage(bot.execute(statMessage).message());
     users.get(chatId).setUserQuizSession(null);
   }
 
@@ -161,8 +185,6 @@ public class BotUpdate implements UpdatesListener {
       chooseQuiz(callbackQuery, userId);
       return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
-
-    UserInfo userInfo = users.get(userId);
     handlerQuizAnswer(callbackQuery, userId);
     return UpdatesListener.CONFIRMED_UPDATES_ALL;
   }
@@ -174,7 +196,7 @@ public class BotUpdate implements UpdatesListener {
       sendAnswer(callbackQuery, chatId);
     }
 
-    if (userQuizSession.getQuizCounter() == userQuizSession.getQuestionAmount()) {
+    if (userQuizSession.getQuestionCounter() == userQuizSession.getQuestionAmount()) {
       sendQuizStats(chatId);
     }
 
@@ -220,8 +242,8 @@ public class BotUpdate implements UpdatesListener {
     return users.containsKey(chatId);
   }
 
-  private void clearKeyboard(CallbackQuery callbackQuery, Long chatId) {
-    Message message = callbackQuery.message();
+  private void clearLastMessageKeyboard(Long chatId){
+    Message message = users.get(chatId).getLastBotMessage();
     EditMessageText editMessage = new EditMessageText(chatId, message.messageId(), message.text());
     editMessage.replyMarkup(new InlineKeyboardMarkup(new InlineKeyboardButton("").callbackData("deleted")));
     bot.execute(editMessage);
@@ -230,10 +252,10 @@ public class BotUpdate implements UpdatesListener {
   private void chooseQuiz(CallbackQuery callbackQuery, Long chatId) {
     UserInfo userInfo = users.get(chatId);
     String topicName = callbackQuery.data();
-    clearKeyboard(callbackQuery, chatId);
+    clearLastMessageKeyboard(chatId);
     userInfo.setChoiceQuiz(false);
     bot.execute(new SendMessage(chatId, String.format("Quiz: %s\n write /start_quiz or /choice for choice any quiz",
-        topicName)));
+            topicName)));
   }
 
   private String getAnswerText(UserQuizSession userQuizSession, int userAnswerNum) {
@@ -245,13 +267,24 @@ public class BotUpdate implements UpdatesListener {
     String answerMessageText;
     if (questionAnswerNum == userAnswerNum) {
       answerMessageText = String.format("✅ It's Right!\n\n<b>Answer:</b> %s\n\n%s",
-          quizAnswerOption, quizAnswerDescription);
+              quizAnswerOption, quizAnswerDescription);
       userQuizSession.addRightCounter();
     } else {
       answerMessageText = String.format("❌ It's wrong!\n\n<b>Your answer:</b> %s\n<b>Right answer:</b> %s\n\n%s",
-          userAnswerText, quizAnswerOption, quizAnswerDescription);
+              userAnswerText, quizAnswerOption, quizAnswerDescription);
     }
     return answerMessageText;
   }
 
 }
+
+
+
+
+
+
+
+
+
+
+

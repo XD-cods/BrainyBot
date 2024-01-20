@@ -2,13 +2,12 @@ package org.example.model;
 
 import java.util.Collection;
 import java.util.Iterator;
-
 public class UserQuizSession {
 
   private final int questionAmount;
   private final Iterator<Question> questionIterator;
   private Question currentQuestion;
-  private int quizCounter = 0;
+  private int questionCounter = 0;
   private int rightAnswerCounter = 0;
   private boolean quizMode = true;
 
@@ -30,9 +29,6 @@ public class UserQuizSession {
     rightAnswerCounter++;
   }
 
-  public void addQuizCounter() {
-    quizCounter++;
-  }
 
   public void setQuizMode(boolean quizMode) {
     this.quizMode = quizMode;
@@ -43,12 +39,12 @@ public class UserQuizSession {
   }
 
   public Question getNextQuestion() {
-    quizCounter++;
+    questionCounter++;
     return currentQuestion = questionIterator.next();
   }
 
-  public int getQuizCounter() {
-    return quizCounter;
+  public int getQuestionCounter() {
+    return questionCounter;
   }
 
   public int getQuestionAmount() {
