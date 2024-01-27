@@ -14,7 +14,6 @@ public class UserQuizSession {
   public UserQuizSession(Collection<Question> questions) {
     this.questionIterator = questions.iterator();
     this.questionAmount = questions.size();
-//    this.currentQuestion = this.questionIterator.next();
   }
 
   public boolean isQuizMode() {
