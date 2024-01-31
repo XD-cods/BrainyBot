@@ -17,7 +17,7 @@ public class QuizInfo {
     @Column(name = "topic")
     private String topic;
     @Column(name = "quiz_data")
-    private String quiz;
+    private String quizData;
     public QuizInfo() {
     }
 
@@ -37,11 +37,11 @@ public class QuizInfo {
         this.topic = topic;
     }
 
-    public String getQuiz() {
-        return quiz;
+    public String getQuizData() {
+        return quizData;
     }
 
-    public void setQuiz(String quiz) {
-        this.quiz = quiz;
+    public void setQuizData(String quizData) {
+        this.quizData = quizData;
     }
 }
