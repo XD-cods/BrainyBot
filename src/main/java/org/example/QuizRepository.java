@@ -30,7 +30,6 @@ public class QuizRepository {
       return List.of();
     }
     String json = quizInfo.getQuizData();
-    System.out.println(json);
     Gson gson = new GsonBuilder().create();
     return Arrays.asList(gson.fromJson(quizInfo.getQuizData(), Question[].class));
 
