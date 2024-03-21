@@ -12,6 +12,7 @@ import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.EditMessageText;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.example.model.Question;
+import org.example.model.QuestionOption;
 import org.example.model.UserInfo;
 import org.example.model.UserQuizSession;
 
@@ -119,12 +120,12 @@ public class BotUpdate implements UpdatesListener {
   private void sendQuestion(Long chatId) {
     UserQuizSession userQuizSession = users.get(chatId).getUserQuizSession();
     Question question = userQuizSession.getNextQuestion();
-    String[] questionOptions = question.getOptions();
-    Keyboard inlineKeyboardMarkup = buildInlineKeyboard(questionOptions.length);
+    List<QuestionOption> questionOptions = question.getQuestionOption();
+    Keyboard inlineKeyboardMarkup = buildInlineKeyboard(questionOptions.size());
     StringBuilder questionTextMessage = new StringBuilder(String.format("❓ Question: %d\n%s\n",
             userQuizSession.getQuestionCounter(), question.getQuestion()));
-    for (int i = 0; i < questionOptions.length; i++) {
-      questionTextMessage.append(String.format("\n%d. %s", i + 1, questionOptions[i]));
+    for (int i = 0; i < questionOptions.size(); i++) {
+      questionTextMessage.append(String.format("\n%d. %s", i + 1, questionOptions.get(i).getOptionText()));
     }
 
     SendMessage questionMessage = new SendMessage(chatId, questionTextMessage.toString());
@@ -272,9 +273,18 @@ public class BotUpdate implements UpdatesListener {
 
   private String getAnswerText(UserQuizSession userQuizSession, int userAnswerNum) {
     Question question = userQuizSession.getCurrentQuestion();
-    int questionAnswerNum = question.getAnswer();
-    String userAnswerText = question.getOptions()[userAnswerNum];
-    String quizAnswerOption = question.getOptions()[questionAnswerNum];
+    List<QuestionOption> questionOptionList = question.getQuestionOption();
+    String quizAnswerOption = null;
+    int questionAnswerNum = 0;
+    for (int i = 0; i < questionOptionList.size(); i++) {
+      QuestionOption questionOption = questionOptionList.get(i);
+      if(questionOption.isAnswer()){
+        questionAnswerNum = i;
+        quizAnswerOption = questionOption.getOptionText();
+        break;
+      }
+    }
+    String userAnswerText = question.getAnswerDescription();
     String quizAnswerDescription = question.getAnswerDescription();
     String answerMessageText;
     if (questionAnswerNum == userAnswerNum) {
