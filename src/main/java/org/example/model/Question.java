@@ -1,12 +1,12 @@
 package org.example.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -23,16 +23,12 @@ public class Question {
 	@Column(name = "question_text")
 	private String question;
 
-	@ManyToOne
-	@JoinColumn(name = "quiz_id")
-	private Quiz quiz;
-
 	@Column(name = "answer_description")
 	private String answerDescription;
 
-	@OneToMany
-	@JoinColumn(name = "option")
-	private List<QuestionOption> questionOption;
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "question_id")
+	private List<QuestionOption> questionOptions;
 
   public Question() {
   }
@@ -40,9 +36,8 @@ public class Question {
 	public Question(int id, String question, Quiz quiz, String answerDescription, List<QuestionOption> questionOption) {
 		this.id = id;
 		this.question = question;
-		this.quiz = quiz;
 		this.answerDescription = answerDescription;
-		this.questionOption = questionOption;
+		this.questionOptions = questionOption;
 	}
 
 
@@ -63,14 +58,6 @@ public class Question {
 		this.question = question;
 	}
 
-	public Quiz getQuiz() {
-		return quiz;
-	}
-
-	public void setQuiz(Quiz quiz) {
-		this.quiz = quiz;
-	}
-
 	public String getAnswerDescription() {
 		return answerDescription;
 	}
@@ -79,12 +66,12 @@ public class Question {
 		this.answerDescription = answerDescription;
 	}
 
-	public List<QuestionOption> getQuestionOption() {
-		return questionOption;
+	public List<QuestionOption> getQuestionOptions() {
+		return questionOptions;
 	}
 
-	public void setQuestionOption(List<QuestionOption> questionOption) {
-		this.questionOption = questionOption;
+	public void setQuestionOptions(List<QuestionOption> questionOptions) {
+		this.questionOptions = questionOptions;
 	}
 
 

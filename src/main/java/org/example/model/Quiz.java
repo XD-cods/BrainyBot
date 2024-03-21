@@ -1,6 +1,7 @@
 package org.example.model;
 
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,16 +14,16 @@ import jakarta.persistence.Table;
 import java.util.List;
 
 @Entity
-@Table(name = "quizes")
+@Table(schema = "bot",name = "quizes")
 public class Quiz {
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
   @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
   @Column(name = "topic_name")
   private String topicName;
-  @OneToMany
-  @JoinColumn(name = "questions")
+  @OneToMany(cascade = CascadeType.ALL)
+  @JoinColumn(name = "quiz_id")
   List<Question> questionList;
 
   public Quiz() {
@@ -47,5 +48,13 @@ public class Quiz {
 
   public void setTopicName(String topicName) {
     this.topicName = topicName;
+  }
+
+  public List<Question> getQuestionList() {
+    return questionList;
+  }
+
+  public void setQuestionList(List<Question> questionList) {
+    this.questionList = questionList;
   }
 }

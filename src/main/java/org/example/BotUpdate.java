@@ -120,7 +120,7 @@ public class BotUpdate implements UpdatesListener {
   private void sendQuestion(Long chatId) {
     UserQuizSession userQuizSession = users.get(chatId).getUserQuizSession();
     Question question = userQuizSession.getNextQuestion();
-    List<QuestionOption> questionOptions = question.getQuestionOption();
+    List<QuestionOption> questionOptions = question.getQuestionOptions();
     Keyboard inlineKeyboardMarkup = buildInlineKeyboard(questionOptions.size());
     StringBuilder questionTextMessage = new StringBuilder(String.format("❓ Question: %d\n%s\n",
             userQuizSession.getQuestionCounter(), question.getQuestion()));
@@ -273,7 +273,7 @@ public class BotUpdate implements UpdatesListener {
 
   private String getAnswerText(UserQuizSession userQuizSession, int userAnswerNum) {
     Question question = userQuizSession.getCurrentQuestion();
-    List<QuestionOption> questionOptionList = question.getQuestionOption();
+    List<QuestionOption> questionOptionList = question.getQuestionOptions();
     String quizAnswerOption = null;
     int questionAnswerNum = 0;
     for (int i = 0; i < questionOptionList.size(); i++) {

@@ -1,9 +1,15 @@
 package org.example;
 
 import com.pengrad.telegrambot.TelegramBot;
+import org.example.DAO.QuizDAO;
+import org.example.model.Question;
+import org.example.model.QuestionOption;
+import org.example.model.Quiz;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 

@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 public class QuizRepository {
-  private QuizDAO quizDAO = new QuizDAO();
   private final Map<String, Path> quizesTopics = new HashMap<>();
   private static final Logger logger =  LogManager.getLogger(QuizRepository.class);
   public QuizRepository(String jsonPath) {

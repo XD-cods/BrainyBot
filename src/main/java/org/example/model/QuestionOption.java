@@ -5,16 +5,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "question_options")
+@Table(schema = "bot", name = "question_options")
 public class QuestionOption {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
   @Column(name = "is_answer")
@@ -22,10 +20,6 @@ public class QuestionOption {
 
   @Column(name = "option_text")
   private String  optionText;
-
-  @JoinColumn(name = "question_id")
-  @ManyToOne
-  private Question question;
 
   public QuestionOption() {
 
@@ -35,7 +29,6 @@ public class QuestionOption {
     this.id = id;
     this.isAnswer = isAnswer;
     this.optionText = optionText;
-    this.question = question;
   }
 
   public int getId() {
@@ -62,11 +55,8 @@ public class QuestionOption {
     this.optionText = optionText;
   }
 
-  public Question getQuestion() {
-    return question;
-  }
-
-  public void setQuestion(Question question) {
-    this.question = question;
+  @Override
+  public String toString() {
+    return  optionText;
   }
 }

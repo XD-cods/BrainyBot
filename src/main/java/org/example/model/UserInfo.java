@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.NotFound;
 
 @Entity
 @Table(name = "user_info")
@@ -21,10 +22,13 @@ public class UserInfo {
   private Long userId;
   @Column(name = "user_name")
   private String userName;
-
+  @NotFound
   private boolean choiceQuiz = false;
+  @NotFound
   private UserQuizSession userQuizSession = null;
+  @NotFound
   private String currentTopicName;
+  @NotFound
   private Message lastBotMessage = null;
 
   public UserInfo() {
