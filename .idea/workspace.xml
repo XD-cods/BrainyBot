@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="3303dbdc-6474-4dbc-aaae-5f9d00046943" name="Changes" comment="Refactoring handleCallback">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAO/QuizDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAO/QuizDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
@@ -14,8 +13,7 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/Question.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/Question.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/QuestionOption.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/QuestionOption.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/Quiz.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/Quiz.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/UserInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/UserInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/hibernate.config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/hibernate.config.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/UserQuizSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/UserQuizSession.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

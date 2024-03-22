@@ -88,7 +88,7 @@ public class BotUpdate implements UpdatesListener {
           bot.execute(new SendMessage(chatId, "You are not chosen quiz"));
           break;
         }
-        userQuizSession = new UserQuizSession(readRepository.loadQuestions(currentTopicName));
+        userQuizSession = new UserQuizSession(readRepository.loadQuiz(currentTopicName));
         userInfo.setUserQuizSession(userQuizSession);
         bot.execute(new SendMessage(chatId, "Quiz: " + userInfo.getCurrentTopicName()));
         sendQuestion(chatId);

@@ -25,8 +25,7 @@ public class QuestionOption {
 
   }
 
-  public QuestionOption(int id, boolean isAnswer, String optionText, Question question) {
-    this.id = id;
+  public QuestionOption(boolean isAnswer, String optionText) {
     this.isAnswer = isAnswer;
     this.optionText = optionText;
   }

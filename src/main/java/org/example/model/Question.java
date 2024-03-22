@@ -3,6 +3,7 @@ package org.example.model;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,21 +27,18 @@ public class Question {
 	@Column(name = "answer_description")
 	private String answerDescription;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "question_id")
 	private List<QuestionOption> questionOptions;
 
   public Question() {
   }
 
-	public Question(int id, String question, Quiz quiz, String answerDescription, List<QuestionOption> questionOption) {
-		this.id = id;
+	public Question(String question, List<QuestionOption> questionOptions,  String answerDescription) {
 		this.question = question;
 		this.answerDescription = answerDescription;
-		this.questionOptions = questionOption;
+		this.questionOptions = questionOptions;
 	}
-
-
 
 	public int getId() {
 		return id;

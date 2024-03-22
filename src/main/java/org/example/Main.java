@@ -16,7 +16,7 @@ import java.util.Properties;
 public class Main {
   public static void main(String[] args) throws NullPointerException, IOException {
     TelegramBot bot = new TelegramBot(loadToken());
-    QuizRepository readRepository = new QuizRepository("src/main/resources/quizes");
+    QuizRepository readRepository = new QuizRepository();
     BotUpdate listener = new BotUpdate(bot, readRepository);
     QuizBotExceptionHandler exception = new QuizBotExceptionHandler();
     bot.setUpdatesListener(listener, exception);
