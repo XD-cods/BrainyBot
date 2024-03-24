@@ -1,7 +1,5 @@
 package org.example.DAO;
 
-import org.example.model.Question;
-import org.example.model.QuestionOption;
 import org.example.model.Quiz;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -49,12 +47,21 @@ public class QuizDAO {
     }
   }
 
-  public void insertNewQuiz(List<Question> questionList, String topicName) {
+  public void addNewQuiz(Quiz quiz) {
     try (Session session = sessionFactory.openSession()) {
-      Quiz quiz = new Quiz(topicName, questionList);
       session.beginTransaction();
       session.persist(quiz);
       session.getTransaction().commit();
     }
   }
+
+  public int getCountOfQuiz(){
+    try (Session session = sessionFactory.openSession()) {
+      Query<String> query = session.createQuery("select topicName from Quiz", String.class);
+      List<String> topicList = query.list();
+      return topicList.size();
+    }
+  }
+
+
 }

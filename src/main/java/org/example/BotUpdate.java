@@ -9,6 +9,7 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.Keyboard;
 import com.pengrad.telegrambot.model.request.ParseMode;
+import com.pengrad.telegrambot.request.AnswerCallbackQuery;
 import com.pengrad.telegrambot.request.EditMessageText;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.example.model.Question;
@@ -25,11 +26,14 @@ public class BotUpdate implements UpdatesListener {
 
   private final TelegramBot bot;
   private final Map<Long, UserInfo> users = new HashMap<>();
-  private final QuizRepository readRepository;
+  private final DAORepository DAORepository;
+  private final QuizCreateHandler quizCreateHandler;
 
-  public BotUpdate(TelegramBot bot, QuizRepository readRepository) {
+  public BotUpdate(TelegramBot bot, DAORepository DAORepository) {
     this.bot = bot;
-    this.readRepository = readRepository;
+    this.DAORepository = DAORepository;
+    QuizBuilder quizCreator = new QuizBuilder();
+    quizCreateHandler = new QuizCreateHandler(users, bot, quizCreator, DAORepository);
   }
 
   @Override
@@ -42,142 +46,153 @@ public class BotUpdate implements UpdatesListener {
     }
 
     Message message = update.message();
-    Long chatId = message.chat().id();
+    Long userId = message.chat().id();
     String messageText = message.text();
-    if (!isRegisterUser(chatId) && !messageText.equals(BotConstants.START_BOT_COMMAND)) {
-      bot.execute(new SendMessage(chatId, "input /start"));
+    if (!isRegisterUser(userId) && !messageText.equals(BotConstants.START_BOT_COMMAND)) {
+      bot.execute(new SendMessage(userId, "input /start"));
       return UpdatesListener.CONFIRMED_UPDATES_ALL;
+    }
+
+    if (isRegisterUser(userId) && users.get(userId).isCreateMode()) {
+      quizCreateHandler.handleQuizCreation(userId, messageText);
     }
 
     switch (messageText) {
       case BotConstants.START_BOT_COMMAND -> {
-        if (isRegisterUser(chatId)) {
+        if (isRegisterUser(userId)) {
           break;
         }
-        bot.execute(new SendMessage(chatId, BotConstants.STARTING_MESSAGE));
+        bot.execute(new SendMessage(userId, BotConstants.STARTING_MESSAGE));
         UserInfo userInfo = new UserInfo();
-        users.put(chatId, userInfo);
+        users.put(userId, userInfo);
       }
       case BotConstants.CHOOSE_TOPIC_COMMAND -> {
-        UserInfo userInfo = users.get(chatId);
+        UserInfo userInfo = users.get(userId);
         UserQuizSession userQuizSession = userInfo.getUserQuizSession();
         if (userQuizSession != null) {
-          bot.execute(new SendMessage(chatId, "Please finish this quiz"));
+          bot.execute(new SendMessage(userId, "Please finish this quiz"));
           break;
         }
         if (userInfo.isTopicChosen()) {
-          bot.execute(new SendMessage(chatId, "You are not chosen quiz"));
+          bot.execute(new SendMessage(userId, "You are not chosen quiz"));
           break;
         }
-        sendChoiceQuiz(chatId);
+        sendChoiceQuiz(userId);
       }
       case BotConstants.START_QUIZ_COMMAND -> {
-        UserInfo userInfo = users.get(chatId);
+        UserInfo userInfo = users.get(userId);
         UserQuizSession userQuizSession = userInfo.getUserQuizSession();
         if (userQuizSession != null) {
-          bot.execute(new SendMessage(chatId, "Please finish this quiz"));
+          bot.execute(new SendMessage(userId, "Please finish this quiz"));
           break;
         }
-
         String currentTopicName = userInfo.getCurrentTopicName();
         if (currentTopicName == null) {
-          bot.execute(new SendMessage(chatId, "Topic is not chosen, please use /choice command to choose"));
+          bot.execute(new SendMessage(userId, "Topic is not chosen, please use /choice command to choose"));
           break;
         }
         if (userInfo.isTopicChosen()) {
-          bot.execute(new SendMessage(chatId, "You are not chosen quiz"));
+          bot.execute(new SendMessage(userId, "You are not chosen quiz"));
           break;
         }
-        userQuizSession = new UserQuizSession(readRepository.loadQuiz(currentTopicName));
+        userQuizSession = new UserQuizSession(DAORepository.loadQuiz(currentTopicName));
         userInfo.setUserQuizSession(userQuizSession);
-        bot.execute(new SendMessage(chatId, "Quiz: " + userInfo.getCurrentTopicName()));
-        sendQuestion(chatId);
+        bot.execute(new SendMessage(userId, "Quiz: " + userInfo.getCurrentTopicName()));
+        sendQuestion(userId);
       }
-      case BotConstants.CANCEL_QUIZ_COMMAND -> {
-        UserInfo userInfo = users.get(chatId);
+      case BotConstants.CANCEL_COMMAND -> {
+        UserInfo userInfo = users.get(userId);
         UserQuizSession userQuizSession = userInfo.getUserQuizSession();
         if (userQuizSession == null) {
-          bot.execute(new SendMessage(chatId, "You didn't start the quiz"));
+          bot.execute(new SendMessage(userId, "You aren't begin quiz"));
           break;
         }
-        clearLastMessageKeyboard(chatId);
-        sendStatsCanceledQuiz(chatId);
+        clearLastMessageKeyboard(userId);
+        sendStatsCanceledQuiz(userId);
       }
     }
+
     return UpdatesListener.CONFIRMED_UPDATES_ALL;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  private void sendChoiceQuiz(Long chatId) {
-    users.get(chatId).setChoiceQuiz(true);
-    SendMessage choiceQuiz = new SendMessage(chatId, "Choose your quiz!");
+  private void sendChoiceQuiz(Long userId) {
+    users.get(userId).setChoiceQuiz(true);
+    SendMessage choiceQuiz = new SendMessage(userId, "Choose your quiz!");
     Keyboard keyboard = buildTopicChoiceKeyboard();
     choiceQuiz.replyMarkup(keyboard);
-    users.get(chatId).setLastBotMessage(bot.execute(choiceQuiz).message());
+    users.get(userId).setLastBotMessage(bot.execute(choiceQuiz).message());
   }
 
-  private void sendQuestion(Long chatId) {
-    UserQuizSession userQuizSession = users.get(chatId).getUserQuizSession();
+  private void sendQuestion(Long userId) {
+    UserQuizSession userQuizSession = users.get(userId).getUserQuizSession();
     Question question = userQuizSession.getNextQuestion();
-    List<QuestionOption> questionOptions = question.getQuestionOptions();
-    Keyboard inlineKeyboardMarkup = buildInlineKeyboard(questionOptions.size());
+    List<QuestionOption> optionsList = question.getOptionList();
+    Keyboard inlineKeyboardMarkup = buildInlineKeyboard(optionsList.size());
     StringBuilder questionTextMessage = new StringBuilder(String.format("❓ Question: %d\n%s\n",
             userQuizSession.getQuestionCounter(), question.getQuestion()));
-    for (int i = 0; i < questionOptions.size(); i++) {
-      questionTextMessage.append(String.format("\n%d. %s", i + 1, questionOptions.get(i).getOptionText()));
+    for (int i = 0; i < optionsList.size(); i++) {
+      questionTextMessage.append(String.format("\n%d. %s", i + 1, optionsList.get(i).getOptionText()));
     }
 
-    SendMessage questionMessage = new SendMessage(chatId, questionTextMessage.toString());
+    SendMessage questionMessage = new SendMessage(userId, questionTextMessage.toString());
     questionMessage.replyMarkup(inlineKeyboardMarkup);
-    users.get(chatId).setLastBotMessage(bot.execute(questionMessage).message());
+    users.get(userId).setLastBotMessage(bot.execute(questionMessage).message());
   }
 
-  private void sendAnswer(CallbackQuery callbackQuery, Long chatId) {
-    clearLastMessageKeyboard(chatId);
+  private void sendAnswer(CallbackQuery callbackQuery, Long userId) {
+    clearLastMessageKeyboard(userId);
     int userAnswerNum = Integer.parseInt(callbackQuery.data());
-    UserQuizSession userQuizSession = users.get(chatId).getUserQuizSession();
+    UserQuizSession userQuizSession = users.get(userId).getUserQuizSession();
     String answerText = getAnswerText(userQuizSession, userAnswerNum);
-    SendMessage answerMessage = new SendMessage(chatId, answerText).parseMode(ParseMode.HTML);
-    users.get(chatId).setLastBotMessage(bot.execute(answerMessage).message());
+    SendMessage answerMessage = new SendMessage(userId, answerText).parseMode(ParseMode.HTML);
+    users.get(userId).setLastBotMessage(bot.execute(answerMessage).message());
   }
 
-  private void sendQuizStats(Long chatId) {
-    UserQuizSession userQuizSession = users.get(chatId).getUserQuizSession();
+  private void sendQuizStats(Long userId) {
+    UserQuizSession userQuizSession = users.get(userId).getUserQuizSession();
     int quizAmount = userQuizSession.getQuestionAmount();
     int rightAnswerCounter = userQuizSession.getRightAnswerCounter();
     String statMessageText = getQuizStatText(quizAmount, rightAnswerCounter);
     userQuizSession.setQuizMode(false);
-    SendMessage statMessage = new SendMessage(chatId, statMessageText).parseMode(ParseMode.HTML);
+    SendMessage statMessage = new SendMessage(userId, statMessageText).parseMode(ParseMode.HTML);
     Message lastBotMessage = bot.execute(statMessage).message();
-    users.get(chatId).setLastBotMessage(lastBotMessage);
-    users.get(chatId).setUserQuizSession(null);
+    users.get(userId).setLastBotMessage(lastBotMessage);
+    users.get(userId).setUserQuizSession(null);
   }
 
   private static String getQuizStatText(int quizAmount, int rightAnswerCounter) {
-    return String.format("❓ <b>Question number:</b> %d\n\n" +
-                    "✅ <b>Right answers:</b> %d\\%d\n\n" +
-                    "Input /start_quiz to reset bot or chose quiz another quiz /choice",
+    return String.format("""
+                    ❓ <b>Question number:</b> %d
+
+                    ✅ <b>Right answers:</b> %d\\%d
+
+                    Input /start_quiz to reset bot or chose quiz another quiz /choice""",
             quizAmount, rightAnswerCounter, quizAmount);
   }
 
-  private void sendStatsCanceledQuiz(Long chatId) {
-    UserQuizSession userQuizSession = users.get(chatId).getUserQuizSession();
+  private void sendStatsCanceledQuiz(Long userId) {
+    UserQuizSession userQuizSession = users.get(userId).getUserQuizSession();
     int questionCount = userQuizSession.getQuestionCounter();
     int rightAnswerCounter = userQuizSession.getRightAnswerCounter();
     String statMessageText = getCanceledQuizStatText(questionCount, rightAnswerCounter);
     userQuizSession.setQuizMode(false);
-    SendMessage statMessage = new SendMessage(chatId, statMessageText).parseMode(ParseMode.HTML);
-    users.get(chatId).setLastBotMessage(bot.execute(statMessage).message());
-    users.get(chatId).setUserQuizSession(null);
+    SendMessage statMessage = new SendMessage(userId, statMessageText).parseMode(ParseMode.HTML);
+    users.get(userId).setLastBotMessage(bot.execute(statMessage).message());
+    users.get(userId).setUserQuizSession(null);
   }
 
   private static String getCanceledQuizStatText(int questionCount, int rightAnswerCounter) {
-    String statMessageText = String.format("❓<b>You canceled quiz</b>\n\n<b>The questions were:</b> %d\n\n" +
-                    "✅ <b>Right answers:</b> %d\\%d\n\n" +
-                    "Input /start_quiz to reset bot or chose quiz another quiz /choice",
+    return String.format("""
+                    ❓<b>You canceled quiz</b>
+
+                    <b>The questions were:</b> %d
+
+                    ✅ <b>Right answers:</b> %d\\%d
+
+                    Input /start_quiz to reset bot or chose quiz another quiz /choice""",
             questionCount, rightAnswerCounter, questionCount);
-    return statMessageText;
   }
 
   private int handleCallback(CallbackQuery callbackQuery) {
@@ -192,27 +207,36 @@ public class BotUpdate implements UpdatesListener {
       return UpdatesListener.CONFIRMED_UPDATES_NONE;
     }
     if (callbackData.startsWith("topicChoice:")) {
-
       chooseQuiz(callbackData, userId);
+      return UpdatesListener.CONFIRMED_UPDATES_ALL;
+    }
+    if (callbackData.startsWith("createQuiz:")) {
+      if (DAORepository.getCountOfQuiz() >= 9) {
+        bot.execute(new AnswerCallbackQuery(callbackQuery.id()).text("You have max quizzes count"));
+        return UpdatesListener.CONFIRMED_UPDATES_ALL;
+      }
+      users.get(userId).setChoiceQuiz(false);
+      editLastBotMessage("Write topic name for new quiz", userId);
+      users.get(userId).setCreateMode(true);
       return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
     handlerQuizAnswer(callbackQuery, userId);
     return UpdatesListener.CONFIRMED_UPDATES_ALL;
   }
 
-  private void handlerQuizAnswer(CallbackQuery callbackQuery, Long chatId) {
-    UserInfo userInfo = users.get(chatId);
+  private void handlerQuizAnswer(CallbackQuery callbackQuery, Long userId) {
+    UserInfo userInfo = users.get(userId);
     UserQuizSession userQuizSession = userInfo.getUserQuizSession();
     if (userQuizSession.isQuizMode()) {
-      sendAnswer(callbackQuery, chatId);
+      sendAnswer(callbackQuery, userId);
     }
 
     if (userQuizSession.getQuestionCounter() == userQuizSession.getQuestionAmount()) {
-      sendQuizStats(chatId);
+      sendQuizStats(userId);
     }
 
     if (userQuizSession.isNextQuestionAvailable()) {
-      sendQuestion(chatId);
+      sendQuestion(userId);
     }
   }
 
@@ -233,7 +257,7 @@ public class BotUpdate implements UpdatesListener {
   }
 
   private InlineKeyboardMarkup buildTopicChoiceKeyboard() {
-    String[] allTopicsName = readRepository.getAllTopicNames();
+    String[] allTopicsName = DAORepository.getAllTopicNames();
     List<InlineKeyboardButton[]> inlineKeyboardButtons = new ArrayList<>();
     List<InlineKeyboardButton> rows = new ArrayList<>();
     for (int i = 0; i < allTopicsName.length; i++) {
@@ -244,41 +268,50 @@ public class BotUpdate implements UpdatesListener {
 
       rows.add(new InlineKeyboardButton(allTopicsName[i]).callbackData("topicChoice:" + allTopicsName[i]));
     }
-
+    inlineKeyboardButtons.add(rows.toArray(new InlineKeyboardButton[]{}));
+    rows = new ArrayList<>();
+    rows.add(new InlineKeyboardButton("Create new quiz").callbackData("createQuiz:"));
     inlineKeyboardButtons.add(rows.toArray(new InlineKeyboardButton[]{}));
     return new InlineKeyboardMarkup(inlineKeyboardButtons.toArray(new InlineKeyboardButton[][]{}));
   }
 
-  private boolean isRegisterUser(Long chatId) {
-    return users.containsKey(chatId);
-  }
-
-  private void clearLastMessageKeyboard(Long chatId) {
-    Message message = users.get(chatId).getLastBotMessage();
-    EditMessageText editMessage = new EditMessageText(chatId, message.messageId(), message.text());
+  private void editLastBotMessage(String newMessageText, Long userId) {
+    Message message = users.get(userId).getLastBotMessage();
+    EditMessageText editMessage = new EditMessageText(userId, message.messageId(), newMessageText);
     editMessage.replyMarkup(new InlineKeyboardMarkup(new InlineKeyboardButton("").callbackData("deleted")));
     bot.execute(editMessage);
   }
 
-  private void chooseQuiz(String callbackData, Long chatId) {
-    UserInfo userInfo = users.get(chatId);
+  private boolean isRegisterUser(Long userId) {
+    return users.containsKey(userId);
+  }
+
+  private void clearLastMessageKeyboard(Long userId) {
+    Message message = users.get(userId).getLastBotMessage();
+    EditMessageText editMessage = new EditMessageText(userId, message.messageId(), message.text());
+    editMessage.replyMarkup(new InlineKeyboardMarkup(new InlineKeyboardButton("").callbackData("deleted")));
+    bot.execute(editMessage);
+  }
+
+  private void chooseQuiz(String callbackData, Long userId) {
+    UserInfo userInfo = users.get(userId);
     String topicPrefix = "topicChoice:";
     String topicName = callbackData.substring(topicPrefix.length());
     userInfo.setCurrentTopicName(topicName);
-    clearLastMessageKeyboard(chatId);
+    clearLastMessageKeyboard(userId);
     userInfo.setChoiceQuiz(false);
-    bot.execute(new SendMessage(chatId, String.format("Quiz: %s\n write /start_quiz or /choice for choice any quiz",
+    bot.execute(new SendMessage(userId, String.format("Quiz: %s\n write /start_quiz or /choice for choice any quiz",
             topicName)));
   }
 
   private String getAnswerText(UserQuizSession userQuizSession, int userAnswerNum) {
     Question question = userQuizSession.getCurrentQuestion();
-    List<QuestionOption> questionOptionList = question.getQuestionOptions();
+    List<QuestionOption> optionsList = question.getOptionList();
     String quizAnswerOption = null;
     int questionAnswerNum = 0;
-    for (int i = 0; i < questionOptionList.size(); i++) {
-      QuestionOption questionOption = questionOptionList.get(i);
-      if(questionOption.isAnswer()){
+    for (int i = 0; i < optionsList.size(); i++) {
+      QuestionOption questionOption = optionsList.get(i);
+      if (questionOption.isAnswer()) {
         questionAnswerNum = i;
         quizAnswerOption = questionOption.getOptionText();
         break;

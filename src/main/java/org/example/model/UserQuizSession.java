@@ -60,8 +60,4 @@ public class UserQuizSession {
   public Quiz getCurrentQuiz() {
     return currentQuiz;
   }
-
-  public void setCurrentQuiz(Quiz currentQuiz) {
-    this.currentQuiz = currentQuiz;
-  }
 }

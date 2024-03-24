@@ -22,13 +22,10 @@ public class UserInfo {
   private Long userId;
   @Column(name = "user_name")
   private String userName;
-  @NotFound
   private boolean choiceQuiz = false;
-  @NotFound
+  private boolean createMode = false;
   private UserQuizSession userQuizSession = null;
-  @NotFound
   private String currentTopicName;
-  @NotFound
   private Message lastBotMessage = null;
 
   public UserInfo() {
@@ -94,5 +91,13 @@ public class UserInfo {
 
   public void setUserName(String userName) {
     this.userName = userName;
+  }
+
+  public boolean isCreateMode() {
+    return createMode;
+  }
+
+  public void setCreateMode(boolean createMode) {
+    this.createMode = createMode;
   }
 }
