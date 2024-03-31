@@ -29,6 +29,9 @@
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="3c8d8b22-9548-4ca8-aca3-518ab4e0bb23" />
   </component>
+  <component name="DBNavigator.Project.ExecutionManager">
+    <retain-sticky-names value="false" />
+  </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
     <filters />
@@ -99,6 +102,7 @@
           <debugger-type value="ASK" />
         </debugger>
         <object-filters hide-empty-schemas="false" hide-pseudo-columns="false" hide-audit-columns="false">
+          <object-filters />
           <object-type-filter use-master-settings="true">
             <object-type name="SCHEMA" enabled="true" />
             <object-type name="USER" enabled="true" />
@@ -126,7 +130,6 @@
             <object-type name="CLUSTER" enabled="true" />
             <object-type name="DBLINK" enabled="true" />
           </object-type-filter>
-          <object-name-filters />
         </object-filters>
       </connection>
     </connections>

@@ -1,24 +1,18 @@
 package org.example.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(schema = "bot", name = "question_options")
+@Document(collection = "options")
 public class QuestionOption {
   @Id
-  @Column(name = "id")
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
-
-  @Column(name = "is_answer")
+  @JsonIgnore
+  private ObjectId id;
+  @JsonProperty("isAnswer")
   private boolean isAnswer;
-
-  @Column(name = "option_text")
   private String  optionText;
 
   public QuestionOption() {
@@ -30,20 +24,12 @@ public class QuestionOption {
     this.optionText = optionText;
   }
 
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
-  }
-
   public boolean isAnswer() {
     return isAnswer;
   }
 
   public void setAnswer(boolean answer) {
-    isAnswer = answer;
+    this.isAnswer = answer;
   }
 
   public String getOptionText() {
@@ -53,9 +39,12 @@ public class QuestionOption {
   public void setOptionText(String optionText) {
     this.optionText = optionText;
   }
-
-  @Override
-  public String toString() {
-    return  optionText;
+  @JsonIgnore
+  public ObjectId getId() {
+    return id;
+  }
+  @JsonIgnore
+  public void setId(ObjectId id) {
+    this.id = id;
   }
 }

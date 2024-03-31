@@ -1,31 +1,22 @@
 package org.example.model;
 
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
-@Entity
-@Table(schema = "bot",name = "quizes")
+@Document(collection = "quiz")
 public class Quiz {
   @Id
-  @Column(name = "id")
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
-  @Column(name = "topic_name")
+  @JsonIgnore
+  private ObjectId id;
   private String topicName;
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  @JoinColumn(name = "quiz_id")
-  List<Question> questionList;
+  private List<Question> questionList;
 
   public Quiz() {
   }
@@ -33,14 +24,6 @@ public class Quiz {
   public Quiz(String topicName, List<Question> questionList) {
     this.topicName = topicName;
     this.questionList = questionList;
-  }
-
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
   }
 
   public String getTopicName() {
@@ -57,5 +40,13 @@ public class Quiz {
 
   public void setQuestionList(List<Question> questionList) {
     this.questionList = questionList;
+  }
+  @JsonIgnore
+  public ObjectId getId() {
+    return id;
+  }
+  @JsonIgnore
+  public void setId(ObjectId id) {
+    this.id = id;
   }
 }

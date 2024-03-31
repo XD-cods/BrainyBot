@@ -5,12 +5,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3303dbdc-6474-4dbc-aaae-5f9d00046943" name="Changes" comment="Refactoring handleCallback">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/AdminBot.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/AdminBotConstants.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Configs/MongoConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Repositories/QuestionOptionsRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Repositories/QuestionRepo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Repositories/QuizRepo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Repositories/UsersRepo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/Service.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/model/Entity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/model/PermanentUserInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dbnavigator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/BotConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/UserBotConstants.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAO/QuizDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAO/QuizDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAO/QuizDAO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAO/UserInfoDAO.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/DAORepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/DAORepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/QuizCreateHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/QuizCreateHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/UserInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/UserInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/QuizBuilder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/QuizCreateHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/Question.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/Question.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/QuestionOption.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/QuestionOption.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/Quiz.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/Quiz.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/UserInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/TempUserInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/hibernate.config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/hibernate.config.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,8 +43,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Enum" />
-        <option value="Interface" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -87,22 +109,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dataBase&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/vlad/IdeaProjects/knowBot/src/main/resources/quizes&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "dataBase",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/vlad/IdeaProjects/knowBot/src/main/resources/quizes",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "preferences.intentionPowerPack"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/resources/quizes" />
@@ -112,6 +134,11 @@
       <recent name="$PROJECT_DIR$/quiz" />
       <recent name="$PROJECT_DIR$/src/main/resources" />
     </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value=" " />
+    </option>
   </component>
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
@@ -200,6 +227,13 @@
     <option name="localTasksCounter" value="7" />
     <servers />
   </component>
+  <component name="UnknownFeatures">
+    <option featureType="dependencySupport" implementationName="java:org.springframework:spring-core" />
+    <option featureType="dependencySupport" implementationName="executable:docker" />
+    <option featureType="dependencySupport" implementationName="java:com.google.protobuf:protobuf-java" />
+    <option featureType="dependencySupport" implementationName="executable:kubectl" />
+    <option featureType="dependencySupport" implementationName="java:org.springframework.data:spring-data-commons" />
+  </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
@@ -231,6 +265,22 @@
     <MESSAGE value="Added model for storage base info about user (UserInfo) and added function for choice quiz" />
     <MESSAGE value="Refactoring answer on the quiz, choice quiz, added block in the time quiz, switch on the command" />
     <option name="LAST_COMMIT_MESSAGE" value="Refactoring answer on the quiz, choice quiz, added block in the time quiz, switch on the command" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/AdminBot.java</url>
+          <line>99</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="((LinkedHashMap.Entry)((LinkedHashMap)((ObjectSchema)jsonSchema).properties).entrySet().toArray()[1]).getValue()" custom="java.util.LinkedHashMap,com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema,java.util.LinkedHashMap.Entry" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
