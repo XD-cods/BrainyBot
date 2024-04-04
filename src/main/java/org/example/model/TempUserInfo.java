@@ -12,7 +12,35 @@ public class TempUserInfo {
   private String currentTopicName;
   private Message lastkeyboardBotMessage = null;
 
+  private boolean addQuizMode = false;
+  private boolean updateChoiceTopic = false;
+  private boolean updateInputFIle = false;
+
   public TempUserInfo() {
+  }
+
+  public boolean isUpdateChoiceTopic() {
+    return updateChoiceTopic;
+  }
+
+  public void setUpdateChoiceTopic(boolean updateChoiceTopic) {
+    this.updateChoiceTopic = updateChoiceTopic;
+  }
+
+  public boolean isUpdateInputFIle() {
+    return updateInputFIle;
+  }
+
+  public void setUpdateInputFIle(boolean updateInputFIle) {
+    this.updateInputFIle = updateInputFIle;
+  }
+
+  public boolean isAddQuizMode() {
+    return addQuizMode;
+  }
+
+  public void setAddQuizMode(boolean addQuizMode) {
+    this.addQuizMode = addQuizMode;
   }
 
   public String getCurrentTopicName() {

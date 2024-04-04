@@ -1,31 +1,29 @@
 package org.example;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pengrad.telegrambot.TelegramBot;
-import org.example.Services.Service;
-import org.example.model.Question;
-import org.example.model.QuestionOption;
-import org.example.model.Quiz;
+import org.example.Services.QuizService;
+import org.example.Services.UsersService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Properties;
 
 
 public class Main {
   public static void main(String[] args) throws NullPointerException, IOException {
     ApplicationContext applicationContext = new AnnotationConfigApplicationContext(org.example.Configs.MongoConfig.class);
-    Service service = applicationContext.getBean(Service.class);
+    QuizService quizService = applicationContext.getBean(QuizService.class);
+    UsersService usersService = applicationContext.getBean(UsersService.class);
+    quizService.readTopicsFromFile().forEach(System.out::println);
     TelegramBot bot = new TelegramBot(loadToken());
     TelegramBot adminBot = new TelegramBot(loadAdminToken());
-    AdminBot adminListener = new AdminBot(adminBot, service);
+    AdminBot adminListener = new AdminBot(adminBot, quizService, usersService);
+    BotUpdate listener = new BotUpdate(bot, quizService, usersService);
     QuizBotExceptionHandler exception = new QuizBotExceptionHandler();
     adminBot.setUpdatesListener(adminListener, exception);
-//    bot.setUpdatesListener(listener, exception);
+    bot.setUpdatesListener(listener, exception);
   }
 
   private static String loadAdminToken() throws IOException {

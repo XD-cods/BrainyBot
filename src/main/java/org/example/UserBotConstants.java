@@ -3,7 +3,7 @@ package org.example;
 public class UserBotConstants {
 
   public static final String START_BOT_COMMAND = "/start";
-  public static final String CHOOSE_TOPIC_COMMAND = "/generate";
+  public static final String CHOOSE_TOPIC_COMMAND = "/choice";
   public static final String START_QUIZ_COMMAND = "/start_quiz";
   public static final String CANCEL_COMMAND = "/cancel";
 

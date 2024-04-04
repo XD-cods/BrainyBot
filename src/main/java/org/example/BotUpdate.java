@@ -13,6 +13,8 @@ import com.pengrad.telegrambot.request.EditMessageText;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.example.Services.QuizService;
+import org.example.Services.UsersService;
 import org.example.model.Question;
 import org.example.model.QuestionOption;
 import org.example.model.TempUserInfo;
@@ -27,13 +29,13 @@ public class BotUpdate implements UpdatesListener {
 
   private final TelegramBot bot;
   private final Map<Long, TempUserInfo> users = new HashMap<>();
-  //todo refactoring daoRepository on MongoService
-  private final DAORepository DAORepository;
   private final Logger logger = LogManager.getLogger();
-
-  public BotUpdate(TelegramBot bot, DAORepository DAORepository) {
+  private final QuizService quizService;
+  private final UsersService usersService;
+  public BotUpdate(TelegramBot bot, QuizService quizService, UsersService usersService) {
     this.bot = bot;
-    this.DAORepository = DAORepository;
+    this.quizService = quizService;
+    this.usersService = usersService;
   }
 
   @Override
@@ -49,19 +51,19 @@ public class BotUpdate implements UpdatesListener {
       Long userId = message.chat().id();
       String messageText = message.text();
       if (messageText.isEmpty()) {
-        bot.execute(new SendMessage(userId, "input /start"));
+        sendMessage(userId, "input /start");
         users.remove(userId);
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
       }
 
       if (!isRegisterUser(userId) && !messageText.equals(UserBotConstants.START_BOT_COMMAND)) {
-        bot.execute(new SendMessage(userId, "input /start"));
+        sendMessage(userId, "input /start");
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
       }
 
       switch (messageText) {
         case UserBotConstants.START_BOT_COMMAND -> {
-          bot.execute(new SendMessage(userId, UserBotConstants.STARTING_MESSAGE));
+          sendMessage(userId, UserBotConstants.STARTING_MESSAGE);
           users.remove(userId);
           TempUserInfo tempUserInfo = new TempUserInfo();
           users.put(userId, tempUserInfo);
@@ -70,11 +72,11 @@ public class BotUpdate implements UpdatesListener {
           TempUserInfo tempUserInfo = users.get(userId);
           UserQuizSession userQuizSession = tempUserInfo.getUserQuizSession();
           if (userQuizSession != null) {
-            bot.execute(new SendMessage(userId, "Please finish this quiz"));
+            sendMessage(userId, "Please finish this quiz");
             break;
           }
           if (tempUserInfo.isTopicChosen()) {
-            bot.execute(new SendMessage(userId, "You are not chosen quiz"));
+            sendMessage(userId, "You are not chosen quiz");
             break;
           }
           sendTopics(userId);
@@ -83,28 +85,28 @@ public class BotUpdate implements UpdatesListener {
           TempUserInfo tempUserInfo = users.get(userId);
           UserQuizSession userQuizSession = tempUserInfo.getUserQuizSession();
           if (userQuizSession != null) {
-            bot.execute(new SendMessage(userId, "Please finish this quiz"));
+            sendMessage(userId, "Please finish this quiz");
             break;
           }
           String currentTopicName = tempUserInfo.getCurrentTopicName();
           if (currentTopicName == null) {
-            bot.execute(new SendMessage(userId, "Topic is not chosen, please use /choice command to choose"));
+            sendMessage(userId, "Topic is not chosen, please use /choice command to choose");
             break;
           }
           if (tempUserInfo.isTopicChosen()) {
-            bot.execute(new SendMessage(userId, "You are not chosen quiz"));
+            sendMessage(userId, "You are not chosen quiz");
             break;
           }
-          userQuizSession = new UserQuizSession(DAORepository.loadQuiz(currentTopicName));
+          userQuizSession = new UserQuizSession(quizService.findByTopicName(currentTopicName));
           tempUserInfo.setUserQuizSession(userQuizSession);
-          bot.execute(new SendMessage(userId, "Quiz: " + tempUserInfo.getCurrentTopicName()));
+          sendMessage(userId, "Quiz: " + tempUserInfo.getCurrentTopicName());
           sendQuestion(userId);
         }
         case UserBotConstants.CANCEL_COMMAND -> {
           TempUserInfo tempUserInfo = users.get(userId);
           UserQuizSession userQuizSession = tempUserInfo.getUserQuizSession();
           if (userQuizSession == null) {
-            bot.execute(new SendMessage(userId, "You aren't begin quiz"));
+            sendMessage(userId, "You aren't begin quiz");
             break;
           }
           clearLastMessageKeyboard(users.get(userId).getLastkeyboardBotMessage(), userId);
@@ -122,6 +124,10 @@ public class BotUpdate implements UpdatesListener {
 
   }
 
+  private void sendMessage(Long userId, String s) {
+    bot.execute(new SendMessage(userId, s));
+  }
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -135,14 +141,14 @@ public class BotUpdate implements UpdatesListener {
   }
 
   private void sendTopics(Long userId) {
-    List<String> allTopicsName = DAORepository.getAllTopicNames();
+    List<String> allTopicsName = quizService.findAllTopicName();
     StringBuilder choiceTopicText = new StringBuilder("Choose your topic! Input number of quiz");
-    SendMessage choiceTopic = new SendMessage(userId, choiceTopicText.toString());
     users.get(userId).setChoiceTopic(true);
     for (int i = 0; i < allTopicsName.size(); i++) {
       int pagination = i + 1;
       choiceTopicText.append("\n").append(pagination).append(". ").append(allTopicsName.get(i));
     }
+    SendMessage choiceTopic = new SendMessage(userId, choiceTopicText.toString());
     users.get(userId).setLastkeyboardBotMessage(bot.execute(choiceTopic).message());
   }
 
@@ -218,7 +224,7 @@ public class BotUpdate implements UpdatesListener {
   private int handleCallback(CallbackQuery callbackQuery) {
     Long userId = callbackQuery.from().id();
     if (!isRegisterUser(userId)) {
-      bot.execute(new SendMessage(userId, "Input /start"));
+      sendMessage(userId, "Input /start");
       return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
@@ -286,8 +292,8 @@ public class BotUpdate implements UpdatesListener {
     tempUserInfo.setCurrentTopicName(topicName);
     clearLastMessageKeyboard(callbackQuery.message(), userId);
     tempUserInfo.setChoiceTopic(false);
-    bot.execute(new SendMessage(userId, String.format("Quiz: %s\n input /start_quiz or /choice for choice any quiz",
-            topicName)));
+    sendMessage(userId, String.format("Quiz: %s\n input /start_quiz or /choice for choice any quiz",
+            topicName));
   }
 
   private String getAnswerText(UserQuizSession userQuizSession, int userAnswerNum) {

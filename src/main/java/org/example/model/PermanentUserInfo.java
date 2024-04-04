@@ -15,6 +15,11 @@ public class PermanentUserInfo {
   public PermanentUserInfo() {
   }
 
+  public PermanentUserInfo(String userName, boolean isAdmin) {
+    this.userName = userName;
+    this.isAdmin = isAdmin;
+  }
+
   public PermanentUserInfo(String userName, Long userId, boolean isAdmin) {
     this.userName = userName;
     this.userId = userId;
