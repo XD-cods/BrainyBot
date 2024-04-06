@@ -8,9 +8,12 @@ import com.pengrad.telegrambot.model.Message;
 public class TempUserInfo {
   private boolean choiceTopic = false;
   private boolean createMode = false;
+  private boolean choiceCountOfQuestion = false;
   private UserQuizSession userQuizSession = null;
+  private Quiz currentQuiz;
   private String currentTopicName;
   private Message lastkeyboardBotMessage = null;
+  private int countOfQuestion = 0;
 
   private boolean addQuizMode = false;
   private boolean updateChoiceTopic = false;
@@ -81,5 +84,29 @@ public class TempUserInfo {
 
   public void setCreateMode(boolean createMode) {
     this.createMode = createMode;
+  }
+
+  public boolean isChoiceCountOfQuestion() {
+    return choiceCountOfQuestion;
+  }
+
+  public void setChoiceCountOfQuestion(boolean choiceCountOfQuestion) {
+    this.choiceCountOfQuestion = choiceCountOfQuestion;
+  }
+
+  public Quiz getCurrentQuiz() {
+    return currentQuiz;
+  }
+
+  public void setCurrentQuiz(Quiz currentQuiz) {
+    this.currentQuiz = currentQuiz;
+  }
+
+  public int getCountOfQuestion() {
+    return countOfQuestion;
+  }
+
+  public void setCountOfQuestion(int countOfQuestion) {
+    this.countOfQuestion = countOfQuestion;
   }
 }
