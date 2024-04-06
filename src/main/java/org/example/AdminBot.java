@@ -1,11 +1,7 @@
 package org.example;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Document;
@@ -46,6 +42,14 @@ public class AdminBot implements UpdatesListener {
     this.usersService = usersService;
   }
 
+  private static boolean isStartMessage(String messageText) {
+    return messageText.equals(UserBotConstants.START_BOT_COMMAND);
+  }
+
+  private static boolean isDocument(Message message) {
+    return message.document() != null;
+  }
+
   @Override
   public int process(List<Update> updates) {
     Update update = updates.get(updates.size() - 1);
@@ -61,7 +65,6 @@ public class AdminBot implements UpdatesListener {
 
       if (isRegisterUser(userId)) {
         tempUserInfo = users.get(userId).getTempUserInfo();
-
         if (isDocument(message)) {
           DocumentHandler(userId, message, tempUserInfo);
         }
@@ -74,20 +77,20 @@ public class AdminBot implements UpdatesListener {
         sendMessage(userId, "input /start");
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
       } else if (messageText.equals(AdminBotConstants.START_BOT_COMMAND)) {
-        PermanentUserInfo permanentUserInfo = usersService.findByUserName(message.chat().username());
+        PermanentUserInfo permanentUserInfo = usersService.findPemanentUserInfo(message.chat().username(),userId);
         permanentUserInfo.setUserId(userId);
         users.put(userId, new UserInfo(permanentUserInfo, new TempUserInfo()));
-        sendMessage(userId, AdminBotConstants.START_BOT_MESSAGE);
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
       }
-
-      
 
       if (!isAdmin(userId)) {
         sendMessage(userId, "You are not admin");
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
       }
-
+      if (tempUserInfo == null) {
+        tempUserInfo = new TempUserInfo();
+        users.get(userId).setTempUserInfo(tempUserInfo);
+      }
 
       switch (messageText) {
         case AdminBotConstants.CLEAR_DB_COMMAND -> {
@@ -100,11 +103,10 @@ public class AdminBot implements UpdatesListener {
         }
         case AdminBotConstants.ADD_NEW_QUIZ_COMMAND -> {
           if (!tempUserInfo.isAddQuizMode()) {
-            sendMessage(userId, "Input your .json files and input /add" +
-                    " for finish add files or input /cancel");
+            sendMessage(userId, "Input your .json files and input /add" + " for finish add files or input /cancel");
           }
-          if(tempUserInfo.isAddQuizMode()){
-            sendMessage(userId,"You are canceled add quiz");
+          if (tempUserInfo.isAddQuizMode()) {
+            sendMessage(userId, "You are canceled add quiz");
           }
           tempUserInfo.setAddQuizMode(!tempUserInfo.isAddQuizMode());
         }
@@ -126,6 +128,7 @@ public class AdminBot implements UpdatesListener {
           users.get(userId).setTempUserInfo(new TempUserInfo());
         }
       }
+
     } catch (Exception e) {
       logger.error(e.getMessage());
     } finally {
@@ -139,10 +142,28 @@ public class AdminBot implements UpdatesListener {
 
   private void sendFile(String messageText, Long userId, TempUserInfo tempUserInfo) throws IOException {
     int topicIndex = Integer.parseInt(messageText) - 1;
-    List<String> allTopicsName = quizService.findAllTopicName();
+    List<String> allTopicsName = quizService.readTopicsFromFile();
+    if(allTopicsName.isEmpty()){
+      quizService.updateTopicsFile();
+      allTopicsName = quizService.readTopicsFromFile();
+      if(allTopicsName.isEmpty()){
+        sendMessage(userId, "Nothing topic pls add questions");
+        return;
+      }
+    }
     String topicName = allTopicsName.get(topicIndex);
-    java.io.File tempFile = Files.createTempFile(topicName, ".json").toFile();
     Quiz quiz = quizService.findByTopicName(topicName);
+    if(quiz == null){
+      quizService.updateTopicsFile();
+      allTopicsName = quizService.readTopicsFromFile();
+      quiz = quizService.findByTopicName(allTopicsName.get(topicIndex));
+      if(quiz==null){
+        sendMessage(userId, "Not topic with that name");
+        return;
+      }
+    }
+    java.io.File tempFile = Files.createTempFile(topicName, ".json").toFile();
+
     try (FileWriter fileWriter = new FileWriter(tempFile)) {
       fileWriter.write(objectMapper.writeValueAsString(quiz));
     }
@@ -155,6 +176,9 @@ public class AdminBot implements UpdatesListener {
 
   private void DocumentHandler(Long userId, Message message, TempUserInfo tempUserInfo) {
     Quiz quiz = getQuizFromFile(userId, message.document());
+    if (quiz == null) {
+      return;
+    }
     if (tempUserInfo.isAddQuizMode()) {
       quizService.insertNewQuiz(quiz);
     }
@@ -165,7 +189,15 @@ public class AdminBot implements UpdatesListener {
   }
 
   private void sendAllQuiz(Long userId) {
-    List<String> allTopicsName = quizService.findAllTopicName();
+    List<String> allTopicsName = quizService.readTopicsFromFile();
+    if(allTopicsName.isEmpty()){
+      quizService.updateTopicsFile();
+      allTopicsName = quizService.readTopicsFromFile();
+      if(allTopicsName == null){
+        sendMessage(userId, "Sorry not a questions");
+        return;
+      }
+    }
     StringBuilder choiceTopicText = new StringBuilder("Choose your topic! Input number of quiz");
     for (int i = 0; i < allTopicsName.size(); i++) {
       int pagination = i + 1;
@@ -176,21 +208,12 @@ public class AdminBot implements UpdatesListener {
   }
 
   private boolean isAdmin(Long userId) {
-    return users.get(userId).getPermanentUserInfo().isAdmin();
-  }
-
-  private static boolean isStartMessage(String messageText) {
-    return messageText.equals(UserBotConstants.START_BOT_COMMAND);
-  }
-
-  private static boolean isDocument(Message message) {
-    return message.document() != null;
+    return users.get(userId).getPermanentUserInfo().getIsAdmin();
   }
 
   private boolean isRegisterUser(Long userId) {
     return users.containsKey(userId);
   }
-
 
   private Quiz getQuizFromFile(Long userId, Document document) {
     if (document != null && "application/json".equals(document.mimeType())) {
@@ -218,20 +241,5 @@ public class AdminBot implements UpdatesListener {
     }
     sendMessage(userId, "Please send .json file");
     return null;
-  }
-
-  public JsonSchema getJsonSchema() {
-    JsonSchemaGenerator jsonSchemaGenerator = new JsonSchemaGenerator(objectMapper);
-    JsonSchema jsonSchema;
-    try {
-      jsonSchema = jsonSchemaGenerator.generateSchema(Quiz.class);
-      ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
-      System.out.println(objectWriter.writeValueAsString(jsonSchema));
-    } catch (JsonMappingException e) {
-      throw new RuntimeException(e);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
-    }
-    return jsonSchema;
   }
 }

@@ -3,10 +3,7 @@ package org.example.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Reference;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
@@ -52,10 +49,12 @@ public class Question {
   public void setOptionList(List<QuestionOption> optionList) {
     this.optionList = optionList;
   }
+
   @JsonIgnore
   public ObjectId getId() {
     return id;
   }
+
   @JsonIgnore
   public void setId(ObjectId id) {
     this.id = id;

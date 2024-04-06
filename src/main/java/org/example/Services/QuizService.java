@@ -3,45 +3,24 @@ package org.example.Services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import okhttp3.internal.http2.Hpack;
-import org.example.Repositories.QuestionOptionsRepository;
-import org.example.Repositories.QuestionRepo;
 import org.example.Repositories.QuizRepo;
-import org.example.Repositories.UsersRepo;
-import org.example.model.PermanentUserInfo;
-import org.example.model.Question;
-import org.example.model.QuestionOption;
 import org.example.model.Quiz;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
 public class QuizService {
+  String pathTopicsName = "src/main/resources/topics";
   @Autowired
   private QuizRepo quizRepo;
-  @Autowired
-  private QuestionRepo QuestionRepo;
-  @Autowired
-  private QuestionOptionsRepository questionOptionsRepository;
-  @Autowired
-  private UsersRepo usersRepo;
-
-  public PermanentUserInfo findByUserName(String userName) {
-    return usersRepo.findByUserName(userName);
-  }
 
   public List<String> findAllTopicName() {
     ObjectMapper objectMapper = new ObjectMapper();
@@ -49,66 +28,68 @@ public class QuizService {
     if (topics == null) {
       return List.of();
     }
-    return topics.stream()
-            .map(topic -> {
-              try {
-                JsonNode jsonNode = objectMapper.readTree(topic);
-                return jsonNode.get("topicName").asText();
-              } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-              }
-            })
-            .collect(Collectors.toList());
+    return topics.stream().map(topic -> {
+      try {
+        JsonNode jsonNode = objectMapper.readTree(topic);
+        return jsonNode.get("topicName").asText();
+      } catch (JsonProcessingException e) {
+        throw new RuntimeException(e);
+      }
+    }).collect(Collectors.toList());
   }
 
   public void deleteAllQuiz() {
     quizRepo.deleteAll();
     try {
-      Files.delete(Path.of("src/main/resources/topics"));
+      Files.delete(Path.of(pathTopicsName));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public List<String> readTopicsFromFile(){
-    List<String> allTopics;
+  public void updateTopicsFile() {
+    long countOfQuiz = quizRepo.count();
+    if (countOfQuiz <= 0) {
+      return;
+    }
+    List<String> allTopicName = this.findAllTopicName();
+
     try {
-      Path path = Path.of("src/main/resources/topics");
-      allTopics =  Files.readAllLines(path);
+      Files.write(Paths.get(pathTopicsName), allTopicName);
     } catch (IOException e) {
-      return List.of();
+      throw new RuntimeException(e);
     }
-    if (allTopics.isEmpty()){
-      return List.of();
+  }
+
+  public List<String> readTopicsFromFile() {
+    Path path = Path.of(pathTopicsName);
+    long countOfQuiz = quizRepo.count();
+    File file = new File(path.toString());
+    if (countOfQuiz == 0 && file.exists()) {
+      file.delete();
     }
-    return allTopics;
+
+    if (file.exists()) {
+      try {
+        return Files.readAllLines(path);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+    return List.of();
   }
 
   public void insertNewQuiz(Quiz quiz) {
-    if(quizRepo.findByTopicName(quiz.getTopicName()) != null){
-    quizRepo.addByTopic(quiz.getTopicName(), quiz.getQuestionList());
-    return;
+    if (quizRepo.findByTopicName(quiz.getTopicName()) != null) {
+      quizRepo.addByTopic(quiz.getTopicName(), quiz.getQuestionList());
+      return;
     }
     quizRepo.save(quiz);
-    try (FileWriter outputStream = new FileWriter("src/main/resources/topics")) {
+    try (FileWriter outputStream = new FileWriter(pathTopicsName)) {
       outputStream.write(String.valueOf(findAllTopicName()));
-    } catch (FileNotFoundException e) {
-      throw new RuntimeException(e);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  public void insertNewQuestionOptions(QuestionOption questionOption) {
-    questionOptionsRepository.save(questionOption);
-  }
-
-  public void insertNewQuestion(Question question) {
-    QuestionRepo.save(question);
-  }
-
-  public Optional<Quiz> findById(String id) {
-    return quizRepo.findById(id);
   }
 
   public Quiz findByTopicName(String topicName) {
@@ -119,4 +100,6 @@ public class QuizService {
     quizRepo.deleteByTopicName(topicName);
     insertNewQuiz(newQuiz);
   }
+
+
 }

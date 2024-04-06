@@ -1,6 +1,7 @@
 package org.example;
 
 import com.pengrad.telegrambot.TelegramBot;
+import org.example.Configs.MongoDBConfig;
 import org.example.Services.QuizService;
 import org.example.Services.UsersService;
 import org.springframework.context.ApplicationContext;
@@ -13,10 +14,10 @@ import java.util.Properties;
 
 public class Main {
   public static void main(String[] args) throws NullPointerException, IOException {
-    ApplicationContext applicationContext = new AnnotationConfigApplicationContext(org.example.Configs.MongoConfig.class);
+    ApplicationContext applicationContext = new AnnotationConfigApplicationContext(MongoDBConfig.class);
     QuizService quizService = applicationContext.getBean(QuizService.class);
     UsersService usersService = applicationContext.getBean(UsersService.class);
-    quizService.readTopicsFromFile().forEach(System.out::println);
+    quizService.updateTopicsFile();
     TelegramBot bot = new TelegramBot(loadToken());
     TelegramBot adminBot = new TelegramBot(loadAdminToken());
     AdminBot adminListener = new AdminBot(adminBot, quizService, usersService);

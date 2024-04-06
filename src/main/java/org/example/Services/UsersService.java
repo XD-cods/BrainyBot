@@ -10,15 +10,16 @@ public class UsersService {
   @Autowired
   private UsersRepo usersRepo;
 
-  public void addNewUser(PermanentUserInfo permanentUserInfo){
+  public PermanentUserInfo addNewUser(String userName, Long userId) {
+    PermanentUserInfo permanentUserInfo = new PermanentUserInfo(userName, userId, false);
     usersRepo.insert(permanentUserInfo);
+    return permanentUserInfo;
   }
 
-  public PermanentUserInfo findByUserName(String userName){
+  public PermanentUserInfo findPemanentUserInfo(String userName, Long userId) {
     PermanentUserInfo permanentUserInfo = usersRepo.findByUserName(userName);
-    if(permanentUserInfo == null){
-      permanentUserInfo = new PermanentUserInfo(userName,false);
-      addNewUser(permanentUserInfo);
+    if (permanentUserInfo == null) {
+      return addNewUser(userName, userId);
     }
     return permanentUserInfo;
   }

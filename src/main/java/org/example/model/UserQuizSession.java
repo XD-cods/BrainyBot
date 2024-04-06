@@ -1,21 +1,17 @@
 package org.example.model;
 
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 public class UserQuizSession {
 
   private final int questionAmount;
   private final Iterator<Question> questionIterator;
   private Question currentQuestion;
-  private Quiz currentQuiz;
   private int questionCounter = 0;
   private int rightAnswerCounter = 0;
   private boolean quizMode = true;
 
   public UserQuizSession(Quiz quiz) {
-    currentQuiz = quiz;
     this.questionIterator = quiz.getQuestionList().iterator();
     this.questionAmount = quiz.getQuestionList().size();
   }
@@ -24,16 +20,16 @@ public class UserQuizSession {
     return quizMode;
   }
 
+  public void setQuizMode(boolean quizMode) {
+    this.quizMode = quizMode;
+  }
+
   public boolean isNextQuestionAvailable() {
     return questionIterator.hasNext();
   }
 
   public void addRightCounter() {
     rightAnswerCounter++;
-  }
-  
-  public void setQuizMode(boolean quizMode) {
-    this.quizMode = quizMode;
   }
 
   public Question getCurrentQuestion() {
@@ -57,7 +53,4 @@ public class UserQuizSession {
     return rightAnswerCounter;
   }
 
-  public Quiz getCurrentQuiz() {
-    return currentQuiz;
-  }
 }
