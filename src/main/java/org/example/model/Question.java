@@ -5,6 +5,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "question")
@@ -12,9 +13,9 @@ public class Question {
   @Id
   @JsonIgnore
   private ObjectId id;
-  private String question;
-  private String answerDescription;
-  private List<QuestionOption> optionList;
+  private String question = "";
+  private String answerDescription = "";
+  private List<QuestionOption> optionList = new ArrayList<>();
 
   public Question() {
   }

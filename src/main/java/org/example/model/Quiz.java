@@ -4,19 +4,18 @@ package org.example.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "quiz")
 public class Quiz {
   @Id
   @JsonIgnore
-  private ObjectId id;
-  private String topicName;
-  private List<Question> questionList;
+  private ObjectId id = new ObjectId();
+  private String topicName = "";
+  private List<Question> questionList = new ArrayList<>();
 
   public Quiz() {
   }
@@ -31,6 +30,9 @@ public class Quiz {
   }
 
   public void setTopicName(String topicName) {
+    if (topicName == null) {
+      return;
+    }
     this.topicName = topicName;
   }
 
@@ -41,10 +43,12 @@ public class Quiz {
   public void setQuestionList(List<Question> questionList) {
     this.questionList = questionList;
   }
+
   @JsonIgnore
   public ObjectId getId() {
     return id;
   }
+
   @JsonIgnore
   public void setId(ObjectId id) {
     this.id = id;

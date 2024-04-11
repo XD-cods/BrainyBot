@@ -9,10 +9,10 @@ public class TempUserInfo {
   private boolean choiceTopic = false;
   private boolean createMode = false;
   private boolean choiceCountOfQuestion = false;
-  private UserQuizSession userQuizSession = null;
   private Quiz currentQuiz;
+  private UserQuizSession userQuizSession;
   private String currentTopicName;
-  private Message lastkeyboardBotMessage = null;
+  private Message lastkeyboardBotMessage;
   private int countOfQuestion = 0;
 
   private boolean addQuizMode = false;

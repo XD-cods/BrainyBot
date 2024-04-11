@@ -29,7 +29,9 @@ public class UserQuizSession {
   }
 
   public void addRightCounter() {
-    rightAnswerCounter++;
+    if (rightAnswerCounter != questionAmount) {
+      rightAnswerCounter++;
+    }
   }
 
   public Question getCurrentQuestion() {
@@ -37,8 +39,11 @@ public class UserQuizSession {
   }
 
   public Question getNextQuestion() {
-    questionCounter++;
-    return currentQuestion = questionIterator.next();
+    if (isNextQuestionAvailable()) {
+      questionCounter++;
+      return currentQuestion = questionIterator.next();
+    }
+    return currentQuestion;
   }
 
   public int getQuestionCounter() {

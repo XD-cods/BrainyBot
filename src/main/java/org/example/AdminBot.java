@@ -67,6 +67,7 @@ public class AdminBot implements UpdatesListener {
         tempUserInfo = users.get(userId).getTempUserInfo();
         if (isDocument(message)) {
           DocumentHandler(userId, message, tempUserInfo);
+          return UpdatesListener.CONFIRMED_UPDATES_ALL;
         }
         if (tempUserInfo.isUpdateChoiceTopic() && messageText.matches("[0-9]+$")) {
           sendFile(messageText, userId, tempUserInfo);

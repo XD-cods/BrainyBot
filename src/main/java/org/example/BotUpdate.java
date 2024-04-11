@@ -24,6 +24,7 @@ import org.example.model.UserInfo;
 import org.example.model.UserQuizSession;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +32,9 @@ import java.util.Random;
 
 public class BotUpdate implements UpdatesListener {
 
+  private static final Logger log = LogManager.getLogger(BotUpdate.class);
   private final TelegramBot bot;
   private final Map<Long, UserInfo> users = new HashMap<>();
-  private final Logger logger = LogManager.getLogger();
   private final QuizService quizService;
   private final UsersService usersService;
 
@@ -147,7 +148,7 @@ public class BotUpdate implements UpdatesListener {
       }
 
     } catch (Exception e) {
-      logger.error(e.getMessage());
+      log.error(e.getMessage());
     }
     return UpdatesListener.CONFIRMED_UPDATES_ALL;
 
@@ -155,9 +156,8 @@ public class BotUpdate implements UpdatesListener {
 
   private void setCountOfQuiz(String messageText, Long userId, TempUserInfo tempUserInfo) {
     int countOfQuestions = Integer.parseInt(messageText);
-    if (countOfQuestions > 20 || countOfQuestions < 0) {
+    if (countOfQuestions > 20 || countOfQuestions < 5) {
       sendMessage(userId, "Input valid count of question");
-      return;
     }
     tempUserInfo.setCountOfQuestion(countOfQuestions);
     sendMessage(userId, String.format("Quiz: %s\nQuestions:%d\nInput " + UserBotConstants.START_QUIZ_COMMAND +
@@ -212,8 +212,10 @@ public class BotUpdate implements UpdatesListener {
     UserQuizSession userQuizSession = tempUserInfo.getUserQuizSession();
     Question question = userQuizSession.getNextQuestion();
     List<QuestionOption> optionsList = question.getOptionList();
+    Collections.shuffle(optionsList);
     Keyboard inlineKeyboardMarkup = buildInlineKeyboard(optionsList.size());
-    StringBuilder questionTextMessage = new StringBuilder(String.format("❓ Question: %d\n%s\n", userQuizSession.getQuestionCounter(), question.getQuestion()));
+    StringBuilder questionTextMessage = new StringBuilder(String.format("❓ Question: %d\n%s\n",
+            userQuizSession.getQuestionCounter(), question.getQuestion()));
     for (int i = 0; i < optionsList.size(); i++) {
       questionTextMessage.append(String.format("\n%d. %s", i + 1, optionsList.get(i).getOptionText()));
     }

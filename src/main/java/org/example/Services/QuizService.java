@@ -90,6 +90,7 @@ public class QuizService {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+    updateTopicsFile();
   }
 
   public Quiz findByTopicName(String topicName) {

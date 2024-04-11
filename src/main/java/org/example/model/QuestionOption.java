@@ -10,10 +10,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class QuestionOption {
   @Id
   @JsonIgnore
-  private ObjectId id;
+  private ObjectId id = new ObjectId();
   @JsonProperty("isAnswer")
-  private boolean isAnswer;
-  private String  optionText;
+  private boolean isAnswer = false;
+  private String optionText = "";
 
   public QuestionOption() {
 
@@ -24,11 +24,13 @@ public class QuestionOption {
     this.optionText = optionText;
   }
 
+  @JsonProperty("isAnswer")
   public boolean isAnswer() {
     return isAnswer;
   }
 
-  public void setAnswer(boolean answer) {
+  @JsonProperty("isAnswer")
+  public void setIsAnswer(boolean answer) {
     this.isAnswer = answer;
   }
 
@@ -39,10 +41,12 @@ public class QuestionOption {
   public void setOptionText(String optionText) {
     this.optionText = optionText;
   }
+
   @JsonIgnore
   public ObjectId getId() {
     return id;
   }
+
   @JsonIgnore
   public void setId(ObjectId id) {
     this.id = id;
