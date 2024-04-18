@@ -1,0 +1,17 @@
+FROM maven AS builder
+WORKDIR /bot
+COPY . .
+RUN mvn package
+
+FROM openjdk:17
+WORKDIR /bot
+ARG MONGO_URL
+ARG DATABASE_NAME
+ARG TELEGRAM_USER_TOKEN
+ARG TELEGRAM_ADMIN_TOKEN
+ENV MONGO_URL=${MONGO_URL}
+ENV DATABASE_NAME=${DATABASE_NAME}
+ENV TELEGRAM_USER_TOKEN=${TELEGRAM_USER_TOKEN}
+ENV TELEGRAM_ADMIN_TOKEN=${TELEGRAM_ADMIN_TOKEN}
+COPY --from=builder /bot/target/knowBot-1.0-SNAPSHOT-jar-with-dependencies.jar .
+CMD ["java", "-jar", "knowBot-1.0-SNAPSHOT-jar-with-dependencies.jar"]

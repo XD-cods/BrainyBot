@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
 public class QuizService {
-  String pathTopicsName = "src/main/resources/topics";
+  String pathTopicsName = "topics";
   @Autowired
   private QuizRepo quizRepo;
 

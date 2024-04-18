@@ -16,6 +16,9 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @PropertySource("application.properties")
 @EnableMongoRepositories("org.example.Repositories")
 public class MongoDBConfig extends AbstractMongoClientConfiguration {
+//
+//  private String dataBaseName = System.getenv("DATABASE_NAME");
+//  private String connectionUri = System.getenv("MONGO_URL");
 
   @Value("${spring.data.mongodb.databaseName}")
   private String dataBaseName;

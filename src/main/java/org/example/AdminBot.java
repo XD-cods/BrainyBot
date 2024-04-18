@@ -33,7 +33,7 @@ public class AdminBot implements UpdatesListener {
   private final QuizService quizService;
   private final UsersService usersService;
   private final ObjectMapper objectMapper = new ObjectMapper();
-  private final Logger logger = LogManager.getLogger();
+  private final Logger logger = LogManager.getLogger("adminBot");
   private final Map<Long, UserInfo> users = new HashMap<>();
 
   public AdminBot(TelegramBot bot, QuizService quizService, UsersService usersService) {
