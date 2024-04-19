@@ -13,18 +13,18 @@ import java.util.Properties;
 
 
 public class Main {
-//    static String userToken = System.getenv("TELEGRAM_USER_TOKEN");
-//    static String adminToken = System.getenv("TELEGRAM_ADMIN_TOKEN");
-    static String userToken;
-    static String adminToken;
-  static {
-    try {
-      userToken = loadToken();
-      adminToken = loadAdminToken();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
+    static String userToken = System.getenv("TELEGRAM_USER_TOKEN");
+    static String adminToken = System.getenv("TELEGRAM_ADMIN_TOKEN");
+//    static String userToken;
+//    static String adminToken;
+//  static {
+//    try {
+//      userToken = loadToken();
+//      adminToken = loadAdminToken();
+//    } catch (IOException e) {
+//      throw new RuntimeException(e);
+//    }
+//  }
 
   public static void main(String[] args) throws NullPointerException, IOException {
     ApplicationContext applicationContext = new AnnotationConfigApplicationContext(MongoDBConfig.class);
