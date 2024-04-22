@@ -1,0 +1,242 @@
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\r\n         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\r\n    <modelVersion>4.0.0</modelVersion>\r\n\r\n    <groupId>org.example</groupId>\r\n    <artifactId>knowBot</artifactId>\r\n    <version>1.0-SNAPSHOT</version>\r\n\r\n    <properties>\r\n        <maven.compiler.source>17</maven.compiler.source>\r\n        <maven.compiler.target>17</maven.compiler.target>\r\n        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\r\n    </properties>\r\n    <dependencies>\r\n        <dependency>\r\n            <groupId>org.springframework.data</groupId>\r\n            <artifactId>spring-data-redis</artifactId>\r\n            <version>3.2.5</version>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>redis.clients</groupId>\r\n            <artifactId>jedis</artifactId>\r\n            <version>5.1.2</version>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>com.github.pengrad</groupId>\r\n            <artifactId>java-telegram-bot-api</artifactId>\r\n            <version>7.1.1</version>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>com.fasterxml.jackson.module</groupId>\r\n            <artifactId>jackson-module-jsonSchema</artifactId>\r\n            <version>2.17.0</version>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.springframework.data</groupId>\r\n            <artifactId>spring-data-mongodb</artifactId>\r\n            <version>4.2.4</version>\r\n        </dependency>\r\n\r\n        <dependency>\r\n            <groupId>org.mongodb</groupId>\r\n            <artifactId>mongodb-driver-sync</artifactId>\r\n            <version>4.11.1</version>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>com.fasterxml.jackson.core</groupId>\r\n            <artifactId>jackson-databind</artifactId>\r\n            <version>2.16.1</version>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.apache.logging.log4j</groupId>\r\n            <artifactId>log4j-api</artifactId>\r\n            <version>2.17.2</version>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.junit-pioneer</groupId>\r\n            <artifactId>junit-pioneer</artifactId>\r\n            <version>2.2.0</version>\r\n            <scope>test</scope>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.apache.logging.log4j</groupId>\r\n            <artifactId>log4j-core</artifactId>\r\n            <version>2.17.2</version>\r\n        </dependency>\r\n    </dependencies>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pom.xml b/pom.xml
+--- a/pom.xml	(revision 496f2aee2ee913335f887c897af573b82876170d)
++++ b/pom.xml	(date 1713798821304)
+@@ -67,4 +67,54 @@
+             <version>2.17.2</version>
+         </dependency>
+     </dependencies>
++    <build>
++        <!--        <resources>-->
++        <!--            <resource>-->
++        <!--                <directory>src/main/resources</directory>-->
++        <!--                <excludes>-->
++        <!--                    <exclude>*.properties</exclude>-->
++        <!--                </excludes>-->
++        <!--                <filtering>false</filtering>-->
++        <!--            </resource>-->
++        <!--        </resources>-->
++        <plugins>
++            <plugin>
++                <groupId>org.apache.maven.plugins</groupId>
++                <artifactId>maven-jar-plugin</artifactId>
++                <version>3.2.0</version>
++                <configuration>
++
++                    <archive>
++                        <manifest>
++                            <mainClass>org.example.Main</mainClass>
++                        </manifest>
++                    </archive>
++
++                </configuration>
++            </plugin>
++            <plugin>
++                <artifactId>maven-assembly-plugin</artifactId>
++                <version>3.7.1</version>
++                <configuration>
++                    <archive>
++                        <manifest>
++                            <mainClass>org.example.Main</mainClass>
++                        </manifest>
++                    </archive>
++                    <descriptorRefs>
++                        <descriptorRef>jar-with-dependencies</descriptorRef>
++                    </descriptorRefs>
++                </configuration>
++                <executions>
++                    <execution>
++                        <phase>package</phase>
++                        <goals>
++                            <goal>single</goal>
++                        </goals>
++                    </execution>
++                </executions>
++            </plugin>
++        </plugins>
++    </build>
++
+ </project>
+\ No newline at end of file
+Index: src/main/java/org/example/Services/QuizService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.example.Services;\r\n\r\nimport com.fasterxml.jackson.core.JsonProcessingException;\r\nimport com.fasterxml.jackson.databind.JsonNode;\r\nimport com.fasterxml.jackson.databind.ObjectMapper;\r\nimport org.example.Repositories.Mongo.QuizRepo;\r\nimport org.example.model.Quiz;\r\nimport org.springframework.beans.factory.annotation.Autowired;\r\nimport org.springframework.stereotype.Service;\r\n\r\nimport java.io.File;\r\nimport java.io.FileWriter;\r\nimport java.io.IOException;\r\nimport java.nio.file.Files;\r\nimport java.nio.file.Path;\r\nimport java.nio.file.Paths;\r\nimport java.util.List;\r\nimport java.util.stream.Collectors;\r\n\r\n@Service\r\npublic class QuizService {\r\n  String pathTopicsName = \"src/main/resources/topics\";\r\n\r\n  private final QuizRepo quizRepo;\r\n\r\n  @Autowired\r\n  public QuizService(QuizRepo quizRepo) {\r\n    this.quizRepo = quizRepo;\r\n  }\r\n\r\n  public List<String> findAllTopicName() {\r\n    ObjectMapper objectMapper = new ObjectMapper();\r\n    List<String> topics = quizRepo.findAllTopicName();\r\n    if (topics == null) {\r\n      return List.of();\r\n    }\r\n    return topics.stream().map(topic -> {\r\n      try {\r\n        JsonNode jsonNode = objectMapper.readTree(topic);\r\n        return jsonNode.get(\"topicName\").asText();\r\n      } catch (JsonProcessingException e) {\r\n        throw new RuntimeException(e);\r\n      }\r\n    }).collect(Collectors.toList());\r\n  }\r\n\r\n  public void deleteAllQuiz() {\r\n    quizRepo.deleteAll();\r\n    try {\r\n      Files.delete(Path.of(pathTopicsName));\r\n    } catch (IOException e) {\r\n      throw new RuntimeException(e);\r\n    }\r\n  }\r\n\r\n  public void updateTopicsFile() {\r\n    long countOfQuiz = quizRepo.count();\r\n    if (countOfQuiz <= 0) {\r\n      return;\r\n    }\r\n    List<String> allTopicName = this.findAllTopicName();\r\n\r\n    try {\r\n      Files.write(Paths.get(pathTopicsName), allTopicName);\r\n    } catch (IOException e) {\r\n      throw new RuntimeException(e);\r\n    }\r\n  }\r\n\r\n  public List<String> readTopicsFromFile() {\r\n    Path path = Path.of(pathTopicsName);\r\n    long countOfQuiz = quizRepo.count();\r\n    File file = new File(path.toString());\r\n    if (countOfQuiz == 0 && file.exists()) {\r\n      file.delete();\r\n    }\r\n\r\n    if (file.exists()) {\r\n      try {\r\n        return Files.readAllLines(path);\r\n      } catch (IOException e) {\r\n        throw new RuntimeException(e);\r\n      }\r\n    }\r\n    return List.of();\r\n  }\r\n\r\n  public void insertNewQuiz(Quiz quiz) {\r\n    if (quizRepo.findByTopicName(quiz.getTopicName()) != null) {\r\n      quizRepo.addByTopic(quiz.getTopicName(), quiz.getQuestionList());\r\n      return;\r\n    }\r\n    quizRepo.save(quiz);\r\n    try (FileWriter outputStream = new FileWriter(pathTopicsName)) {\r\n      outputStream.write(String.valueOf(findAllTopicName()));\r\n    } catch (IOException e) {\r\n      throw new RuntimeException(e);\r\n    }\r\n    updateTopicsFile();\r\n  }\r\n\r\n  public Quiz findByTopicName(String topicName) {\r\n    return quizRepo.findByTopicName(topicName);\r\n  }\r\n\r\n  public void updateQuizByTopicName(String topicName, Quiz newQuiz) {\r\n    quizRepo.deleteByTopicName(topicName);\r\n    insertNewQuiz(newQuiz);\r\n  }\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/Services/QuizService.java b/src/main/java/org/example/Services/QuizService.java
+--- a/src/main/java/org/example/Services/QuizService.java	(revision 496f2aee2ee913335f887c897af573b82876170d)
++++ b/src/main/java/org/example/Services/QuizService.java	(date 1713798821306)
+@@ -19,7 +19,7 @@
+ 
+ @Service
+ public class QuizService {
+-  String pathTopicsName = "src/main/resources/topics";
++  String pathTopicsName = "topics";
+ 
+   private final QuizRepo quizRepo;
+ 
+Index: src/main/java/org/example/Configs/MongoDBConfig.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.example.Configs;\r\n\r\nimport com.mongodb.ConnectionString;\r\nimport com.mongodb.client.MongoClient;\r\nimport com.mongodb.client.MongoClients;\r\nimport org.springframework.beans.factory.annotation.Value;\r\nimport org.springframework.context.annotation.Bean;\r\nimport org.springframework.context.annotation.ComponentScan;\r\nimport org.springframework.context.annotation.Configuration;\r\nimport org.springframework.context.annotation.PropertySource;\r\nimport org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;\r\nimport org.springframework.data.mongodb.repository.config.EnableMongoRepositories;\r\n\r\n@Configuration\r\n@ComponentScan(basePackages = \"org.example\")\r\n@PropertySource(\"application.properties\")\r\n@EnableMongoRepositories(\"org.example.Repositories.Mongo\")\r\npublic class MongoDBConfig extends AbstractMongoClientConfiguration {\r\n\r\n  @Value(\"${spring.data.mongodb.databaseName}\")\r\n  private String dataBaseName;\r\n  @Value(\"${spring.data.mongodb.uri}\")\r\n  private String connectionUri;\r\n\r\n  @Override\r\n  protected String getDatabaseName() {\r\n    return dataBaseName;\r\n  }\r\n\r\n  @Override\r\n  @Bean\r\n  public MongoClient mongoClient() {\r\n    return MongoClients.create(new ConnectionString(connectionUri));\r\n  }\r\n\r\n  public MongoClient reconnectToDB() {\r\n    MongoClient currentClient = mongoClient();\r\n    currentClient.close();\r\n    return MongoClients.create(new ConnectionString(connectionUri));\r\n  }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/Configs/MongoDBConfig.java b/src/main/java/org/example/Configs/MongoDBConfig.java
+--- a/src/main/java/org/example/Configs/MongoDBConfig.java	(revision 496f2aee2ee913335f887c897af573b82876170d)
++++ b/src/main/java/org/example/Configs/MongoDBConfig.java	(date 1713798821305)
+@@ -17,10 +17,13 @@
+ @EnableMongoRepositories("org.example.Repositories.Mongo")
+ public class MongoDBConfig extends AbstractMongoClientConfiguration {
+ 
+-  @Value("${spring.data.mongodb.databaseName}")
+-  private String dataBaseName;
+-  @Value("${spring.data.mongodb.uri}")
+-  private String connectionUri;
++  private String dataBaseName = System.getenv("DATABASE_NAME");
++  private String connectionUri = System.getenv("MONGO_URL");
++//
++//  @Value("${spring.data.mongodb.databaseName}")
++//  private String dataBaseName;
++//  @Value("${spring.data.mongodb.uri}")
++//  private String connectionUri;
+ 
+   @Override
+   protected String getDatabaseName() {
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"3303dbdc-6474-4dbc-aaae-5f9d00046943\" name=\"Changes\" comment=\"Refactoring Dockerfile\">\r\n      <change afterPath=\"$PROJECT_DIR$/logs/app-04-15-2024-1.log.gz\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/logs/app-04-16-2024-1.log.gz\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/logs/app-04-17-2024-1.log.gz\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/logs/app.log\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/example/Configs/RedisConfig.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/example/Repositories/Redis/RedisRepo.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/src/main/java/org/example/Services/RedisService.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/topics\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/misc.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/misc.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/pom.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/pom.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/org/example/Configs/MongoDBConfig.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/org/example/Configs/MongoDBConfig.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/org/example/Main.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/org/example/Main.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/org/example/Repositories/QuestionOptionsRepository.java\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/org/example/Repositories/QuestionRepo.java\" beforeDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/org/example/Repositories/QuizRepo.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/org/example/Repositories/Mongo/QuizRepo.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/org/example/Repositories/UsersRepo.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/org/example/Repositories/Mongo/UsersRepo.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/org/example/Services/QuizService.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/org/example/Services/QuizService.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/org/example/Services/UsersService.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/org/example/Services/UsersService.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/org/example/model/PermanentUserInfo.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/org/example/model/PermanentUserInfo.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/org/example/model/TempUserInfo.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/org/example/model/TempUserInfo.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/org/example/model/UserInfo.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/org/example/model/UserInfo.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/test/java/org/example/model/TempUserInfoTest.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/test/java/org/example/model/TempUserInfoTest.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Enum\" />\r\n        <option value=\"Interface\" />\r\n        <option value=\"JUnit5 Test Class\" />\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GitHubPullRequestSearchHistory\">{\r\n  &quot;lastFilter&quot;: {\r\n    &quot;state&quot;: &quot;OPEN&quot;,\r\n    &quot;assignee&quot;: &quot;XD-cods&quot;\r\n  }\r\n}</component>\r\n  <component name=\"GitToolBoxStore\">\r\n    <option name=\"projectConfigVersion\" value=\"5\" />\r\n    <option name=\"recentBranches\">\r\n      <RecentBranches>\r\n        <option name=\"branchesForRepo\">\r\n          <list>\r\n            <RecentBranchesForRepo>\r\n              <option name=\"branches\">\r\n                <list>\r\n                  <RecentBranch>\r\n                    <option name=\"branchName\" value=\"dataBase\" />\r\n                    <option name=\"lastUsedInstant\" value=\"1711009328\" />\r\n                  </RecentBranch>\r\n                  <RecentBranch>\r\n                    <option name=\"branchName\" value=\"main\" />\r\n                    <option name=\"lastUsedInstant\" value=\"1711009327\" />\r\n                  </RecentBranch>\r\n                </list>\r\n              </option>\r\n              <option name=\"repositoryRootUrl\" value=\"file://$PROJECT_DIR$\" />\r\n            </RecentBranchesForRepo>\r\n          </list>\r\n        </option>\r\n      </RecentBranches>\r\n    </option>\r\n  </component>\r\n  <component name=\"GithubPullRequestsUISettings\">{\r\n  &quot;selectedUrlAndAccountId&quot;: {\r\n    &quot;url&quot;: &quot;https://github.com/XD-cods/knowBot.git&quot;,\r\n    &quot;accountId&quot;: &quot;716ae5f9-f2f0-4031-abaf-6f38b82326ad&quot;\r\n  }\r\n}</component>\r\n  <component name=\"HighlightingSettingsPerFile\">\r\n    <setting file=\"jar://$MAVEN_REPOSITORY$/com/github/pengrad/java-telegram-bot-api/6.9.1/java-telegram-bot-api-6.9.1.jar!/com/pengrad/telegrambot/impl/UpdatesHandler.class\" root0=\"SKIP_INSPECTION\" />\r\n    <setting file=\"file://$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java\" root0=\"FORCE_HIGHLIGHTING\" />\r\n  </component>\r\n  <component name=\"JvmLoggingSettingsStorage\">\r\n    <option name=\"loggerId\" value=\"Log4j2\" />\r\n  </component>\r\n  <component name=\"KubernetesApiPersistence\">{}</component>\r\n  <component name=\"KubernetesApiProvider\">{\r\n  &quot;isMigrated&quot;: true\r\n}</component>\r\n  <component name=\"ProblemsViewState\">\r\n    <option name=\"selectedTabId\" value=\"ProjectErrors\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;customColor&quot;: &quot;ff00f2ff&quot;,\r\n  &quot;associatedIndex&quot;: 5\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2WtJwtQb4eafXfS6gaatF3c43Bz\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\">\r\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\r\n  </component>\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;Application.Main.executor&quot;: &quot;Run&quot;,\r\n    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,\r\n    &quot;JUnit.All in knowBot.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.QuestionTest.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.QuizTest.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.QuizTest.getQuestionList.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.QuizTest.getTopicName.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.QuizTest.setQuestionList.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.QuizTest.setTopicName.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.UserQuizSessionTest.addRightCounter.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.UserQuizSessionTest.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.UserQuizSessionTest.getCurrentQuestion.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.UserQuizSessionTest.getNextQuestion.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.UserQuizSessionTest.getQuestionAmount.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.UserQuizSessionTest.getQuestionCounter.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.UserQuizSessionTest.getRightAnswerCounter.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.UserQuizSessionTest.isNextQuestionAvailable.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.UserQuizSessionTest.isNextQuestionNotAvailable.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.java in knowBot.executor&quot;: &quot;Run&quot;,\r\n    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,\r\n    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,\r\n    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,\r\n    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,\r\n    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,\r\n    &quot;extract.method.default.visibility&quot;: &quot;private&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;dataBase&quot;,\r\n    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/Vlad/IdeaProjects/knowBot&quot;,\r\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,\r\n    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,\r\n    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,\r\n    &quot;project.structure.side.proportion&quot;: &quot;0.52988505&quot;,\r\n    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,\r\n    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,\r\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\r\n  },\r\n  &quot;keyToStringList&quot;: {\r\n    &quot;DatabaseDriversLRU&quot;: [\r\n      &quot;mongo&quot;,\r\n      &quot;redis&quot;\r\n    ]\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"$PROJECT_DIR$/src/main/resources/quizes\" />\r\n    </key>\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"$PROJECT_DIR$/src/main/resources/quizes\" />\r\n      <recent name=\"$PROJECT_DIR$/quiz\" />\r\n      <recent name=\"$PROJECT_DIR$/src/main/resources\" />\r\n    </key>\r\n    <key name=\"CreateTestDialog.Recents.Supers\">\r\n      <recent name=\"\" />\r\n    </key>\r\n    <key name=\"CreateTestDialog.RecentsKey\">\r\n      <recent name=\"org.example.model\" />\r\n      <recent name=\"org.example\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunAnythingCache\">\r\n    <option name=\"myCommands\">\r\n      <command value=\" \" />\r\n    </option>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"Application.Main\">\r\n    <configuration name=\"Main\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"org.example.Main\" />\r\n      <module name=\"knowBot\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"org.example.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"All in knowBot\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"knowBot\" />\r\n      <option name=\"PACKAGE_NAME\" value=\"\" />\r\n      <option name=\"TEST_OBJECT\" value=\"package\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"QuestionTest\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"knowBot\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"org.example.model.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <option name=\"PACKAGE_NAME\" value=\"org.example.model\" />\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"org.example.model.QuestionTest\" />\r\n      <option name=\"TEST_OBJECT\" value=\"class\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"QuizTest\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"knowBot\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"org.example.model.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <option name=\"PACKAGE_NAME\" value=\"org.example.model\" />\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"org.example.model.QuizTest\" />\r\n      <option name=\"TEST_OBJECT\" value=\"class\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"java in knowBot\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"knowBot\" />\r\n      <option name=\"TEST_OBJECT\" value=\"directory\" />\r\n      <dir value=\"$PROJECT_DIR$/src/test/java\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <list>\r\n      <item itemvalue=\"Application.Main\" />\r\n      <item itemvalue=\"JUnit.java in knowBot\" />\r\n      <item itemvalue=\"JUnit.All in knowBot\" />\r\n      <item itemvalue=\"JUnit.QuestionTest\" />\r\n      <item itemvalue=\"JUnit.QuizTest\" />\r\n    </list>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Application.Main\" />\r\n        <item itemvalue=\"JUnit.java in knowBot\" />\r\n        <item itemvalue=\"JUnit.All in knowBot\" />\r\n        <item itemvalue=\"JUnit.QuestionTest\" />\r\n        <item itemvalue=\"JUnit.QuizTest\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-jdk-9f38398b9061-18abd8497189-intellij.indexing.shared.core-IU-241.14494.240\" />\r\n        <option value=\"bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-IU-241.14494.240\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"3303dbdc-6474-4dbc-aaae-5f9d00046943\" name=\"Changes\" comment=\"\" />\r\n      <created>1697546185034</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1697546185034</updated>\r\n      <workItem from=\"1713596478786\" duration=\"26000\" />\r\n      <workItem from=\"1713596516341\" duration=\"94000\" />\r\n      <workItem from=\"1713596622022\" duration=\"379000\" />\r\n      <workItem from=\"1713767109979\" duration=\"1271000\" />\r\n      <workItem from=\"1713778399299\" duration=\"2259000\" />\r\n      <workItem from=\"1713788351068\" duration=\"8607000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"create project\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1697546304779</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1697546304779</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"&quot;Create folder for model question and user state. Replace lambda in main class on BotUpdate, BotException. Create class QuizReadRepository and BotConstats. Replace replyKeybord on inlineKeyboard, removed class Service, added method in BotUpdate from Service and added 2 methods: callbackHandler, buildInlineKeyboard&quot;\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1698779798292</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1698779798292</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"Add removing keyboard after answer on the question\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1699466758647</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1699466758647</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"Refactor answer message, added statistics in the end quiz\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1699807317129</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1699807317129</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00005\" summary=\"Added model for storage base info about user (UserInfo) and added function for choice quiz\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1700063559545</created>\r\n      <option name=\"number\" value=\"00005\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1700063559545</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00006\" summary=\"Refactoring answer on the quiz, choice quiz, added block in the time quiz, switch on the command\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1700459010450</created>\r\n      <option name=\"number\" value=\"00006\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00006\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1700459010451</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"7\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"UnknownFeatures\">\r\n    <option featureType=\"dependencySupport\" implementationName=\"java:org.springframework:spring-core\" />\r\n    <option featureType=\"dependencySupport\" implementationName=\"executable:docker\" />\r\n    <option featureType=\"dependencySupport\" implementationName=\"java:com.google.protobuf:protobuf-java\" />\r\n    <option featureType=\"dependencySupport\" implementationName=\"executable:kubectl\" />\r\n    <option featureType=\"dependencySupport\" implementationName=\"java:org.springframework.data:spring-data-commons\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State>\r\n              <option name=\"FILTERS\">\r\n                <map>\r\n                  <entry key=\"branch\">\r\n                    <value>\r\n                      <list>\r\n                        <option value=\"dataBase\" />\r\n                      </list>\r\n                    </value>\r\n                  </entry>\r\n                </map>\r\n              </option>\r\n            </State>\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"create project\" />\r\n    <MESSAGE value=\"&quot;Create folder for model question and user state. Replace lambda in main class on BotUpdate, BotException. Create class QuizReadRepository and BotConstats. Replace replyKeybord on inlineKeyboard, removed class Service, added method in BotUpdate from Service and added 2 methods: callbackHandler, buildInlineKeyboard&quot;\" />\r\n    <MESSAGE value=\"Add removing keyboard after answer on the question\" />\r\n    <MESSAGE value=\"Refactor answer message, added statistics in the end quiz\" />\r\n    <MESSAGE value=\"Added model for storage base info about user (UserInfo) and added function for choice quiz\" />\r\n    <MESSAGE value=\"Refactoring answer on the quiz, choice quiz, added block in the time quiz, switch on the command\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Refactoring answer on the quiz, choice quiz, added block in the time quiz, switch on the command\" />\r\n  </component>\r\n  <component name=\"XDebuggerManager\">\r\n    <watches-manager>\r\n      <configuration name=\"Application\">\r\n        <watch expression=\"((LinkedHashMap.Entry)((LinkedHashMap)((ObjectSchema)jsonSchema).properties).entrySet().toArray()[1]).getValue()\" language=\"JAVA\" custom=\"java.util.LinkedHashMap,com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema,java.util.LinkedHashMap.Entry\" />\r\n      </configuration>\r\n    </watches-manager>\r\n  </component>\r\n  <component name=\"XSLT-Support.FileAssociations.UIState\">\r\n    <expand />\r\n    <select />\r\n  </component>\r\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\r\n    <SUITE FILE_PATH=\"coverage/knowBot$Main.ic\" NAME=\"Main Coverage Results\" MODIFIED=\"1698003580330\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"idea\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\">\r\n      <FILTER>org.example.*</FILTER>\r\n    </SUITE>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 496f2aee2ee913335f887c897af573b82876170d)
++++ b/.idea/workspace.xml	(date 1713798821304)
+@@ -5,30 +5,9 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="3303dbdc-6474-4dbc-aaae-5f9d00046943" name="Changes" comment="Refactoring Dockerfile">
+-      <change afterPath="$PROJECT_DIR$/logs/app-04-15-2024-1.log.gz" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/logs/app-04-16-2024-1.log.gz" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/logs/app-04-17-2024-1.log.gz" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/logs/app.log" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Configs/RedisConfig.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Repositories/Redis/RedisRepo.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/RedisService.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/topics" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Configs/MongoDBConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Configs/MongoDBConfig.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Repositories/QuestionOptionsRepository.java" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Repositories/QuestionRepo.java" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Repositories/QuizRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Repositories/Mongo/QuizRepo.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Repositories/UsersRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Repositories/Mongo/UsersRepo.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Services/QuizService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/QuizService.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Services/UsersService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/UsersService.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/PermanentUserInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/PermanentUserInfo.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/TempUserInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/TempUserInfo.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/UserInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/UserInfo.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/model/TempUserInfoTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/model/TempUserInfoTest.java" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -48,12 +27,27 @@
+   <component name="Git.Settings">
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+   </component>
+-  <component name="GitHubPullRequestSearchHistory">{
+-  &quot;lastFilter&quot;: {
+-    &quot;state&quot;: &quot;OPEN&quot;,
+-    &quot;assignee&quot;: &quot;XD-cods&quot;
++  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
++  "history": [
++    {
++      "state": "OPEN"
++    }
++  ],
++  "lastFilter": {
++    "state": "OPEN"
+   }
+-}</component>
++}]]></component>
++  <component name="GitHubPullRequestState"><![CDATA[{
++  "prStates": [
++    {
++      "id": {
++        "id": "PR_kwDOKhdGC85tXUBa",
++        "number": 4
++      },
++      "lastSeen": 1713798729894
++    }
++  ]
++}]]></component>
+   <component name="GitToolBoxStore">
+     <option name="projectConfigVersion" value="5" />
+     <option name="recentBranches">
+@@ -80,12 +74,22 @@
+       </RecentBranches>
+     </option>
+   </component>
+-  <component name="GithubPullRequestsUISettings">{
+-  &quot;selectedUrlAndAccountId&quot;: {
+-    &quot;url&quot;: &quot;https://github.com/XD-cods/knowBot.git&quot;,
+-    &quot;accountId&quot;: &quot;716ae5f9-f2f0-4031-abaf-6f38b82326ad&quot;
++  <component name="GithubPullRequestsUISettings"><![CDATA[{
++  "selectedUrlAndAccountId": {
++    "url": "https://github.com/XD-cods/knowBot.git",
++    "accountId": "716ae5f9-f2f0-4031-abaf-6f38b82326ad"
++  },
++  "recentNewPullRequestHead": {
++    "server": {
++      "useHttp": false,
++      "host": "github.com",
++      "port": null,
++      "suffix": null
++    },
++    "owner": "XD-cods",
++    "repository": "knowBot"
+   }
+-}</component>
++}]]></component>
+   <component name="HighlightingSettingsPerFile">
+     <setting file="jar://$MAVEN_REPOSITORY$/com/github/pengrad/java-telegram-bot-api/6.9.1/java-telegram-bot-api-6.9.1.jar!/com/pengrad/telegrambot/impl/UpdatesHandler.class" root0="SKIP_INSPECTION" />
+     <setting file="file://$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java" root0="FORCE_HIGHLIGHTING" />
+@@ -348,6 +352,26 @@
+     <option featureType="dependencySupport" implementationName="java:org.springframework.data:spring-data-commons" />
+   </component>
+   <component name="Vcs.Log.Tabs.Properties">
++    <option name="RECENT_FILTERS">
++      <map>
++        <entry key="Branch">
++          <value>
++            <list>
++              <RecentGroup>
++                <option name="FILTER_VALUES">
++                  <option value="origin/main" />
++                </option>
++              </RecentGroup>
++              <RecentGroup>
++                <option name="FILTER_VALUES">
++                  <option value="HEAD" />
++                </option>
++              </RecentGroup>
++            </list>
++          </value>
++        </entry>
++      </map>
++    </option>
+     <option name="TAB_STATES">
+       <map>
+         <entry key="MAIN">

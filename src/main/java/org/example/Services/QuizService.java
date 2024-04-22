@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class QuizService {
-  String pathTopicsName = "src/main/resources/topics";
+  String pathTopicsName = "topics";
 
   private final QuizRepo quizRepo;
 
