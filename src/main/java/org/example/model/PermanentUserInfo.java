@@ -4,15 +4,16 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.redis.core.RedisHash;
 
 @Document
+@RedisHash("PermanentUserInfo")
 public class PermanentUserInfo {
   @Id
-  private ObjectId id;
-  @Field(name = "userName")
-  private String userName;
   @Field(name = "userId")
   private Long userId;
+  @Field(name = "userName")
+  private String userName;
   @Field(name = "isAdmin")
   private boolean isAdmin = false;
 

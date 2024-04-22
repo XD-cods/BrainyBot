@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @Configuration
 @ComponentScan(basePackages = "org.example")
 @PropertySource("application.properties")
-@EnableMongoRepositories("org.example.Repositories")
+@EnableMongoRepositories("org.example.Repositories.Mongo")
 public class MongoDBConfig extends AbstractMongoClientConfiguration {
 
   @Value("${spring.data.mongodb.databaseName}")

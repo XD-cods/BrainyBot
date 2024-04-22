@@ -3,9 +3,10 @@ package org.example.Services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.Repositories.QuizRepo;
+import org.example.Repositories.Mongo.QuizRepo;
 import org.example.model.Quiz;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,11 +17,16 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@org.springframework.stereotype.Service
+@Service
 public class QuizService {
   String pathTopicsName = "src/main/resources/topics";
+
+  private final QuizRepo quizRepo;
+
   @Autowired
-  private QuizRepo quizRepo;
+  public QuizService(QuizRepo quizRepo) {
+    this.quizRepo = quizRepo;
+  }
 
   public List<String> findAllTopicName() {
     ObjectMapper objectMapper = new ObjectMapper();

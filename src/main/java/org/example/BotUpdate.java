@@ -14,6 +14,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.Services.QuizService;
+import org.example.Services.RedisService;
 import org.example.Services.UsersService;
 import org.example.model.PermanentUserInfo;
 import org.example.model.Question;
@@ -26,9 +27,11 @@ import org.example.model.UserQuizSession;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 public class BotUpdate implements UpdatesListener {
 
@@ -37,11 +40,13 @@ public class BotUpdate implements UpdatesListener {
   private final Map<Long, UserInfo> users = new HashMap<>();
   private final QuizService quizService;
   private final UsersService usersService;
+  private final RedisService redisService;
 
-  public BotUpdate(TelegramBot bot, QuizService quizService, UsersService usersService) {
+  public BotUpdate(TelegramBot bot, QuizService quizService, UsersService usersService, RedisService redisService) {
     this.bot = bot;
     this.quizService = quizService;
     this.usersService = usersService;
+    this.redisService = redisService;
   }
 
   private static String getQuizStatText(int quizAmount, int rightAnswerCounter) {
@@ -61,8 +66,8 @@ public class BotUpdate implements UpdatesListener {
 
   @Override
   public int process(List<Update> updates) throws NullPointerException {
-    Update update = updates.get(updates.size() - 1);
     try {
+      Update update = updates.get(updates.size() - 1);
       if (update.callbackQuery() != null) {
         return handleCallback(update.callbackQuery());
       } else if (update.message() == null) {
@@ -93,8 +98,8 @@ public class BotUpdate implements UpdatesListener {
             PermanentUserInfo permanentUserInfo = usersService.findPemanentUserInfo(message.chat().username(), userId);
             users.put(userId, new UserInfo(permanentUserInfo, new TempUserInfo()));
           }
-          sendMessage(userId, UserBotConstants.STARTING_MESSAGE);
           users.get(userId).setTempUserInfo(new TempUserInfo());
+          sendMessage(userId, UserBotConstants.STARTING_MESSAGE);
         }
         case UserBotConstants.CHOOSE_TOPIC_COMMAND -> {
           tempUserInfo = users.get(userId).getTempUserInfo();
@@ -146,12 +151,13 @@ public class BotUpdate implements UpdatesListener {
           choiceTopic(messageText, tempUserInfo, userId);
         }
       }
-
+      return UpdatesListener.CONFIRMED_UPDATES_ALL;
     } catch (Exception e) {
+      System.err.println(e);
       log.error(e.getMessage());
     }
-    return UpdatesListener.CONFIRMED_UPDATES_ALL;
 
+    return UpdatesListener.CONFIRMED_UPDATES_ALL;
   }
 
   private void setCountOfQuiz(String messageText, Long userId, TempUserInfo tempUserInfo) {
@@ -170,18 +176,29 @@ public class BotUpdate implements UpdatesListener {
 
   private Quiz getGeneratedQuiz(String currentTopicName, TempUserInfo tempUserInfo) {
     Quiz quiz = quizService.findByTopicName(currentTopicName);
+    List<Question> questionList = quiz.getQuestionList();
+    int countOfQuestion = tempUserInfo.getCountOfQuestion();
+    if (questionList.size() <= countOfQuestion) {
+      return quiz;
+    }
     Quiz generatedQuiz = new Quiz();
     List<Question> generatedQuestionList = new ArrayList<>();
-    List<Question> questionList = quiz.getQuestionList();
-    int sizeQuestionList = questionList.size();
-    Random random = new Random();
-    for (int i = 0; i < tempUserInfo.getCountOfQuestion(); i++) {
-      int questionIndex = random.nextInt(sizeQuestionList);
-      generatedQuestionList.add(questionList.get(questionIndex));
+    Set<Integer> uniqueNumbers = getUniqueNums(questionList.size() - 1, countOfQuestion);
+    for(Integer i : uniqueNumbers) {
+      generatedQuestionList.add(questionList.get(i));
     }
     generatedQuiz.setQuestionList(generatedQuestionList);
     generatedQuiz.setTopicName(quiz.getTopicName());
     return generatedQuiz;
+  }
+
+  private Set<Integer> getUniqueNums(int max, int count) {
+    Set<Integer> uniqueNums = new HashSet<>();
+    Random random = new Random();
+    while (count > uniqueNums.size()) {
+      uniqueNums.add(random.nextInt(max));
+    }
+    return uniqueNums;
   }
 
   private void sendMessage(Long userId, String s) {

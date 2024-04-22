@@ -3,9 +3,13 @@
 package org.example.model;
 
 import com.pengrad.telegrambot.model.Message;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
 
-
+@RedisHash("TempUserInfo")
 public class TempUserInfo {
+  @Id
+  private String id;
   private boolean choiceTopic = false;
   private boolean createMode = false;
   private boolean choiceCountOfQuestion = false;

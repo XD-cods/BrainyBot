@@ -1,4 +1,4 @@
-package org.example.Repositories;
+package org.example.Repositories.Mongo;
 
 import org.example.model.Question;
 import org.example.model.Quiz;
@@ -6,11 +6,9 @@ import org.springframework.data.mongodb.repository.DeleteQuery;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Update;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public interface QuizRepo extends MongoRepository<Quiz, String> {

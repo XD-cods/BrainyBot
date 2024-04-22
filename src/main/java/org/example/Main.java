@@ -2,7 +2,9 @@ package org.example;
 
 import com.pengrad.telegrambot.TelegramBot;
 import org.example.Configs.MongoDBConfig;
+import org.example.Configs.RedisConfig;
 import org.example.Services.QuizService;
+import org.example.Services.RedisService;
 import org.example.Services.UsersService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -15,13 +17,16 @@ import java.util.Properties;
 public class Main {
   public static void main(String[] args) throws NullPointerException, IOException {
     ApplicationContext applicationContext = new AnnotationConfigApplicationContext(MongoDBConfig.class);
+    ApplicationContext redisApplicationContext = new AnnotationConfigApplicationContext(RedisConfig.class);
+    RedisService redisService = redisApplicationContext.getBean(RedisService.class);
     QuizService quizService = applicationContext.getBean(QuizService.class);
     UsersService usersService = applicationContext.getBean(UsersService.class);
     quizService.updateTopicsFile();
+
     TelegramBot bot = new TelegramBot(loadToken());
     TelegramBot adminBot = new TelegramBot(loadAdminToken());
     AdminBot adminListener = new AdminBot(adminBot, quizService, usersService);
-    BotUpdate listener = new BotUpdate(bot, quizService, usersService);
+    BotUpdate listener = new BotUpdate(bot, quizService, usersService, redisService);
     QuizBotExceptionHandler exception = new QuizBotExceptionHandler();
     adminBot.setUpdatesListener(adminListener, exception);
     bot.setUpdatesListener(listener, exception);

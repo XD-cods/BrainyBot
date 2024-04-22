@@ -4,30 +4,31 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3303dbdc-6474-4dbc-aaae-5f9d00046943" name="Changes" comment="Refactoring handleCallback">
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/BotUpdateTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/model/QuestionOptionTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/model/QuestionTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/model/QuizTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/model/TempUserInfoTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/model/UserQuizSessionTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+    <list default="true" id="3303dbdc-6474-4dbc-aaae-5f9d00046943" name="Changes" comment="Refactoring Dockerfile">
+      <change afterPath="$PROJECT_DIR$/logs/app-04-15-2024-1.log.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logs/app-04-16-2024-1.log.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logs/app-04-17-2024-1.log.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logs/app.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Configs/RedisConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Repositories/Redis/RedisRepo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/RedisService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/topics" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/AdminBot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/AdminBot.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Configs/MongoDBConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Configs/MongoDBConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/QuizBotExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/QuizBotExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Repositories/QuestionOptionsRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Repositories/QuestionRepo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Repositories/QuizRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Repositories/Mongo/QuizRepo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Repositories/UsersRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Repositories/Mongo/UsersRepo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Services/QuizService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/QuizService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/Question.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/Question.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/QuestionOption.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/QuestionOption.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/Quiz.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/Quiz.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Services/UsersService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Services/UsersService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/PermanentUserInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/PermanentUserInfo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/TempUserInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/TempUserInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/UserQuizSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/UserQuizSession.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/log4j2.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/topics" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/UserInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/UserInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/model/TempUserInfoTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/model/TempUserInfoTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,8 +40,8 @@
       <list>
         <option value="Enum" />
         <option value="Interface" />
-        <option value="Class" />
         <option value="JUnit5 Test Class" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -92,8 +93,12 @@
   <component name="JvmLoggingSettingsStorage">
     <option name="loggerId" value="Log4j2" />
   </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="ProjectErrors" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;ff00f2ff&quot;,
@@ -127,6 +132,7 @@
     &quot;JUnit.UserQuizSessionTest.getRightAnswerCounter.executor&quot;: &quot;Run&quot;,
     &quot;JUnit.UserQuizSessionTest.isNextQuestionAvailable.executor&quot;: &quot;Run&quot;,
     &quot;JUnit.UserQuizSessionTest.isNextQuestionNotAvailable.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.java in knowBot.executor&quot;: &quot;Run&quot;,
     &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
     &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
     &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
@@ -138,12 +144,24 @@
     &quot;extract.method.default.visibility&quot;: &quot;private&quot;,
     &quot;git-widget-placeholder&quot;: &quot;dataBase&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/vlad/IdeaProjects/knowBot/src/main/resources/quizes&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Vlad/IdeaProjects/knowBot&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.52988505&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.appearance&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mongo&quot;,
+      &quot;redis&quot;
+    ]
   }
 }</component>
   <component name="RecentsManager">
@@ -220,31 +238,38 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="QuizTest.setQuestionList" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="java in knowBot" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="knowBot" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.example.model.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.example.model" />
-      <option name="MAIN_CLASS_NAME" value="org.example.model.QuizTest" />
-      <option name="METHOD_NAME" value="setQuestionList" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="TEST_OBJECT" value="directory" />
+      <dir value="$PROJECT_DIR$/src/test/java" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Application.Main" />
+      <item itemvalue="JUnit.java in knowBot" />
+      <item itemvalue="JUnit.All in knowBot" />
+      <item itemvalue="JUnit.QuestionTest" />
+      <item itemvalue="JUnit.QuizTest" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.Main" />
+        <item itemvalue="JUnit.java in knowBot" />
         <item itemvalue="JUnit.All in knowBot" />
         <item itemvalue="JUnit.QuestionTest" />
         <item itemvalue="JUnit.QuizTest" />
-        <item itemvalue="JUnit.QuizTest.setQuestionList" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-18abd8497189-intellij.indexing.shared.core-IU-241.14494.240" />
+        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-IU-241.14494.240" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -254,6 +279,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1697546185034</updated>
+      <workItem from="1713596478786" duration="26000" />
+      <workItem from="1713596516341" duration="94000" />
+      <workItem from="1713596622022" duration="379000" />
+      <workItem from="1713767109979" duration="1271000" />
+      <workItem from="1713778399299" duration="2259000" />
+      <workItem from="1713788351068" duration="8607000" />
     </task>
     <task id="LOCAL-00001" summary="create project">
       <option name="closed" value="true" />
@@ -305,6 +336,9 @@
     </task>
     <option name="localTasksCounter" value="7" />
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="UnknownFeatures">
     <option featureType="dependencySupport" implementationName="java:org.springframework:spring-core" />

@@ -1,8 +1,7 @@
-package org.example.Repositories;
+package org.example.Repositories.Mongo;
 
 import org.example.model.PermanentUserInfo;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
