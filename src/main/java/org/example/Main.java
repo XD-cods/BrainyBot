@@ -15,6 +15,19 @@ import java.util.Properties;
 
 
 public class Main {
+    static String userToken = System.getenv("TELEGRAM_USER_TOKEN");
+    static String adminToken = System.getenv("TELEGRAM_ADMIN_TOKEN");
+//    static String userToken;
+//    static String adminToken;
+//  static {
+//    try {
+//      userToken = loadToken();
+//      adminToken = loadAdminToken();
+//    } catch (IOException e) {
+//      throw new RuntimeException(e);
+//    }
+//  }
+
   public static void main(String[] args) throws NullPointerException, IOException {
     ApplicationContext applicationContext = new AnnotationConfigApplicationContext(MongoDBConfig.class);
     ApplicationContext redisApplicationContext = new AnnotationConfigApplicationContext(RedisConfig.class);
@@ -22,9 +35,8 @@ public class Main {
     QuizService quizService = applicationContext.getBean(QuizService.class);
     UsersService usersService = applicationContext.getBean(UsersService.class);
     quizService.updateTopicsFile();
-
-    TelegramBot bot = new TelegramBot(loadToken());
-    TelegramBot adminBot = new TelegramBot(loadAdminToken());
+    TelegramBot bot = new TelegramBot(userToken);
+    TelegramBot adminBot = new TelegramBot(adminToken);
     AdminBot adminListener = new AdminBot(adminBot, quizService, usersService);
     BotUpdate listener = new BotUpdate(bot, quizService, usersService, redisService);
     QuizBotExceptionHandler exception = new QuizBotExceptionHandler();

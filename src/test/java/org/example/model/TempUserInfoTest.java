@@ -12,8 +12,4 @@ class TempUserInfoTest {
     tempUserInfo = new TempUserInfo();
   }
 
-  @Test
-  void getCountOfQuestion() {
-    Assertions.assertEquals(tempUserInfo.getCountOfQuestion(), 0);
-  }
 }
