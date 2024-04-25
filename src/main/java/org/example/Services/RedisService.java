@@ -1,7 +1,8 @@
 package org.example.Services;
 
+import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.User;
-import org.example.Repositories.Redis.RedisRepo;
+import com.pengrad.telegrambot.request.SendMessage;
 import org.example.model.PermanentUserInfo;
 import org.example.model.TempUserInfo;
 import org.example.model.UserInfo;
@@ -9,37 +10,46 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class RedisService {
   private RedisTemplate<Long, UserInfo> redisTemplate;
-  private RedisRepo redisRepo;
   private UsersService usersService;
 
   @Autowired
-  public RedisService(RedisTemplate<Long, UserInfo> redisTemplate, RedisRepo redisRepo, UsersService usersService) {
+  public RedisService(RedisTemplate<Long, UserInfo> redisTemplate, UsersService usersService) {
     this.redisTemplate = redisTemplate;
-    this.redisRepo = redisRepo;
     this.usersService = usersService;
   }
 
-  public Long countOfUser(){
-    return redisRepo.count();
+
+  public void persistUser(UserInfo user, Long userId) {
+    redisTemplate.opsForValue().set(userId, user, 5, TimeUnit.SECONDS);
   }
 
-  public void addNewUser(UserInfo user){
-    redisTemplate.opsForValue().set(user.getPermanentUserInfo().getUserId(), user);
-  }
-
-  public UserInfo findUser(String userName, Long userId){
-    Optional<UserInfo> user = redisRepo.findById(userId);
-    if (user.isEmpty()) {
+  public UserInfo findUser(String userName, Long userId) {
+    UserInfo user = redisTemplate.opsForValue().get(userId);
+    if (user == null) {
       PermanentUserInfo permanentUserInfo = usersService.findPemanentUserInfo(userName, userId);
       UserInfo userInfo = new UserInfo(permanentUserInfo, new TempUserInfo());
-      addNewUser(userInfo);
-      user = Optional.of(userInfo);
+      persistUser(userInfo, userId);
+      user = userInfo;
     }
-    return user.get();
+    return user;
+  }
+
+  public void updateUserInfo(Long userId, TempUserInfo tempUserInfo) {
+    UserInfo userInfo = redisTemplate.opsForValue().get(userId);
+    if (userInfo != null) {
+      userInfo.setTempUserInfo(tempUserInfo);
+      persistUser(userInfo, userId);
+    }
+  }
+
+  public void sendNotification(String userName) {
+    PermanentUserInfo permanentUserInfo = usersService.findPermanentUserInfo(userName);
+    TelegramBot telegramBot = new TelegramBot("6683005363:AAFHknGfItPK9EeiiwQmeHMb5t5M_lgh-LM");
+    telegramBot.execute(new SendMessage(permanentUserInfo.getUserId(), "You are expired"));
   }
 }

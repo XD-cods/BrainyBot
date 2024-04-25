@@ -11,12 +11,12 @@ public class TempUserInfo {
   @Id
   private String id;
   private boolean choiceTopic = false;
-  private boolean createMode = false;
   private boolean choiceCountOfQuestion = false;
   private Quiz currentQuiz;
   private UserQuizSession userQuizSession;
   private String currentTopicName;
-  private Message lastkeyboardBotMessage;
+  private int lastKeyboardBotMessageId;
+  private String lastKeyboardBotMessageText;
   private int countOfQuestion = 0;
 
   private boolean addQuizMode = false;
@@ -58,7 +58,7 @@ public class TempUserInfo {
     this.currentTopicName = currentTopicName;
   }
 
-  public boolean isTopicChosen() {
+  public boolean isChoiceTopic() {
     return choiceTopic;
   }
 
@@ -74,20 +74,20 @@ public class TempUserInfo {
     this.userQuizSession = userQuizSession;
   }
 
-  public Message getLastkeyboardBotMessage() {
-    return lastkeyboardBotMessage;
+  public int getLastKeyboardBotMessageId() {
+    return lastKeyboardBotMessageId;
   }
 
-  public void setLastkeyboardBotMessage(Message lastkeyboardBotMessage) {
-    this.lastkeyboardBotMessage = lastkeyboardBotMessage;
+  public void setLastKeyboardBotMessageId(int lastKeyboardBotMessageId) {
+    this.lastKeyboardBotMessageId = lastKeyboardBotMessageId;
   }
 
-  public boolean isCreateMode() {
-    return createMode;
+  public String getLastKeyboardBotMessageText() {
+    return lastKeyboardBotMessageText;
   }
 
-  public void setCreateMode(boolean createMode) {
-    this.createMode = createMode;
+  public void setLastKeyboardBotMessageText(String lastKeyboardBotMessageText) {
+    this.lastKeyboardBotMessageText = lastKeyboardBotMessageText;
   }
 
   public boolean isChoiceCountOfQuestion() {
@@ -108,6 +108,14 @@ public class TempUserInfo {
 
   public int getCountOfQuestion() {
     return countOfQuestion;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   public void setCountOfQuestion(int countOfQuestion) {

@@ -10,6 +10,9 @@ public class UserInfo {
   private PermanentUserInfo permanentUserInfo;
   private TempUserInfo tempUserInfo;
 
+  public UserInfo() {
+  }
+
   public UserInfo(PermanentUserInfo permanentUserInfo, TempUserInfo tempUserInfo) {
     this.permanentUserInfo = permanentUserInfo;
     this.tempUserInfo = tempUserInfo;

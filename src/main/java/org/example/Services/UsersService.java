@@ -27,4 +27,12 @@ public class UsersService {
     }
     return permanentUserInfo;
   }
+
+  public PermanentUserInfo findPermanentUserInfo(String userName) {
+    PermanentUserInfo permanentUserInfo = usersRepo.findByUserName(userName);
+    if (permanentUserInfo == null) {
+      return new PermanentUserInfo(userName, null, false);
+    }
+    return permanentUserInfo;
+  }
 }
