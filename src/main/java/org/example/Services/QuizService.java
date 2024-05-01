@@ -19,9 +19,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class QuizService {
-  String pathTopicsName = "topics";
-
   private final QuizRepo quizRepo;
+  String pathTopicsName = "topics";
 
   @Autowired
   public QuizService(QuizRepo quizRepo) {

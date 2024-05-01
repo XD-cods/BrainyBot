@@ -8,7 +8,8 @@ public class UserBotConstants {
   public static final String CANCEL_COMMAND = "/cancel";
 
   public static final String STARTING_MESSAGE = "\uD83D\uDE2E Hello! I'm bot for testing your knowledge! " +
-      "\uD83E\uDD2F\n\n❓For choosing quiz input /choice❓\n❓For starting quiz /start_quiz❓";
+                                                "\uD83E\uDD2F\n\n❓For choosing quiz input /choice❓" +
+                                                "\n❓For starting quiz /start_quiz❓";
 
   private UserBotConstants() {
   }

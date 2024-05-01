@@ -35,7 +35,7 @@ public class UserInfo {
   }
 
   public TempUserInfo getTempUserInfo() {
-    if(tempUserInfo == null){
+    if (tempUserInfo == null) {
       return new TempUserInfo();
     }
     return tempUserInfo;
@@ -47,9 +47,6 @@ public class UserInfo {
 
   @Override
   public String toString() {
-    return "UserInfo{" +
-           "permanentUserInfo=" + permanentUserInfo +
-           ", tempUserInfo=" + tempUserInfo +
-           '}';
+    return "UserInfo{" + "permanentUserInfo=" + permanentUserInfo + ", tempUserInfo=" + tempUserInfo + '}';
   }
 }

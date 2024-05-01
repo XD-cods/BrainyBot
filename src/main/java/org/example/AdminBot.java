@@ -14,7 +14,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.Services.QuizService;
-import org.example.Services.UsersService;
+import org.example.Services.RedisService;
 import org.example.model.PermanentUserInfo;
 import org.example.model.Quiz;
 import org.example.model.TempUserInfo;
@@ -24,22 +24,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AdminBot implements UpdatesListener {
   private final TelegramBot bot;
   private final QuizService quizService;
-  private final UsersService usersService;
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final Logger logger = LogManager.getLogger("adminBot");
-  private final Map<Long, UserInfo> users = new HashMap<>();
+  private final RedisService redisService;
 
-  public AdminBot(TelegramBot bot, QuizService quizService, UsersService usersService) {
+  public AdminBot(TelegramBot bot, QuizService quizService, RedisService redisService) {
     this.bot = bot;
     this.quizService = quizService;
-    this.usersService = usersService;
+    this.redisService = redisService;
   }
 
   private static boolean isStartMessage(String messageText) {
@@ -61,36 +58,21 @@ public class AdminBot implements UpdatesListener {
       Message message = update.message();
       Long userId = message.chat().id();
       String messageText = message.text();
-      TempUserInfo tempUserInfo = null;
+      UserInfo userInfo = redisService.findUser(message.chat().username(), userId);
+      TempUserInfo tempUserInfo = userInfo.getTempUserInfo();
 
-      if (isRegisterUser(userId)) {
-        tempUserInfo = users.get(userId).getTempUserInfo();
-        if (isDocument(message)) {
-          DocumentHandler(userId, message, tempUserInfo);
-          return UpdatesListener.CONFIRMED_UPDATES_ALL;
-        }
-        if (tempUserInfo.isUpdateChoiceTopic() && messageText.matches("[0-9]+$")) {
-          sendFile(messageText, userId, tempUserInfo);
-        }
+      if (!isAdmin(userInfo.getPermanentUserInfo())) {
+        return UpdatesListener.CONFIRMED_UPDATES_ALL;
+      } else if (isAdmin(userInfo.getPermanentUserInfo()) && isStartMessage(messageText)) {
+        sendMessage(userId, AdminBotConstants.START_BOT_MESSAGE);
       }
 
-      if (!isRegisterUser(userId) && !isStartMessage(messageText)) {
-        sendMessage(userId, "input /start");
-        return UpdatesListener.CONFIRMED_UPDATES_ALL;
-      } else if (messageText.equals(AdminBotConstants.START_BOT_COMMAND)) {
-        PermanentUserInfo permanentUserInfo = usersService.findPemanentUserInfo(message.chat().username(),userId);
-        permanentUserInfo.setUserId(userId);
-        users.put(userId, new UserInfo(permanentUserInfo, new TempUserInfo()));
+      if (isDocument(message)) {
+        DocumentHandler(userId, message, tempUserInfo);
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
       }
-
-      if (!isAdmin(userId)) {
-        sendMessage(userId, "You are not admin");
-        return UpdatesListener.CONFIRMED_UPDATES_ALL;
-      }
-      if (tempUserInfo == null) {
-        tempUserInfo = new TempUserInfo();
-        users.get(userId).setTempUserInfo(tempUserInfo);
+      if (tempUserInfo.isUpdateChoiceTopic() && messageText.matches("[0-9]+$")) {
+        sendFile(messageText, userId, tempUserInfo);
       }
 
       switch (messageText) {
@@ -110,6 +92,7 @@ public class AdminBot implements UpdatesListener {
             sendMessage(userId, "You are canceled add quiz");
           }
           tempUserInfo.setAddQuizMode(!tempUserInfo.isAddQuizMode());
+          redisService.updateUserInfo(userId, tempUserInfo);
         }
         case AdminBotConstants.UPDATE_QUIZ_COMMAND -> {
           if (tempUserInfo.isAddQuizMode()) {
@@ -122,11 +105,12 @@ public class AdminBot implements UpdatesListener {
           }
           sendMessage(userId, "Input number of quiz");
           tempUserInfo.setUpdateChoiceTopic(true);
+          redisService.updateUserInfo(userId, tempUserInfo);
           sendAllQuiz(userId);
         }
         case AdminBotConstants.CANCEL_COMMAND -> {
           sendMessage(userId, "Commands is canceled");
-          users.get(userId).setTempUserInfo(new TempUserInfo());
+          redisService.updateUserInfo(userId, new TempUserInfo());
         }
       }
 
@@ -144,21 +128,21 @@ public class AdminBot implements UpdatesListener {
   private void sendFile(String messageText, Long userId, TempUserInfo tempUserInfo) throws IOException {
     int topicIndex = Integer.parseInt(messageText) - 1;
     List<String> allTopicsName = quizService.readTopicsFromFile();
-    if(allTopicsName.isEmpty()){
+    if (allTopicsName.isEmpty()) {
       quizService.updateTopicsFile();
       allTopicsName = quizService.readTopicsFromFile();
-      if(allTopicsName.isEmpty()){
+      if (allTopicsName.isEmpty()) {
         sendMessage(userId, "Nothing topic pls add questions");
         return;
       }
     }
     String topicName = allTopicsName.get(topicIndex);
     Quiz quiz = quizService.findByTopicName(topicName);
-    if(quiz == null){
+    if (quiz == null) {
       quizService.updateTopicsFile();
       allTopicsName = quizService.readTopicsFromFile();
       quiz = quizService.findByTopicName(allTopicsName.get(topicIndex));
-      if(quiz==null){
+      if (quiz == null) {
         sendMessage(userId, "Not topic with that name");
         return;
       }
@@ -172,6 +156,7 @@ public class AdminBot implements UpdatesListener {
     bot.execute(new SendDocument(userId, tempFile));
     tempUserInfo.setUpdateChoiceTopic(false);
     tempUserInfo.setUpdateInputFIle(true);
+    redisService.updateUserInfo(userId, tempUserInfo);
     tempFile.delete();
   }
 
@@ -186,15 +171,16 @@ public class AdminBot implements UpdatesListener {
     if (tempUserInfo.isUpdateInputFIle()) {
       quizService.updateQuizByTopicName(quiz.getTopicName(), quiz);
       tempUserInfo.setUpdateInputFIle(false);
+      redisService.updateUserInfo(userId, tempUserInfo);
     }
   }
 
   private void sendAllQuiz(Long userId) {
     List<String> allTopicsName = quizService.readTopicsFromFile();
-    if(allTopicsName.isEmpty()){
+    if (allTopicsName.isEmpty()) {
       quizService.updateTopicsFile();
       allTopicsName = quizService.readTopicsFromFile();
-      if(allTopicsName == null){
+      if (allTopicsName == null) {
         sendMessage(userId, "Sorry not a questions");
         return;
       }
@@ -208,12 +194,8 @@ public class AdminBot implements UpdatesListener {
     bot.execute(topics);
   }
 
-  private boolean isAdmin(Long userId) {
-    return users.get(userId).getPermanentUserInfo().getIsAdmin();
-  }
-
-  private boolean isRegisterUser(Long userId) {
-    return users.containsKey(userId);
+  private boolean isAdmin(PermanentUserInfo permanentUserInfo) {
+    return permanentUserInfo.getIsAdmin();
   }
 
   private Quiz getQuizFromFile(Long userId, Document document) {
@@ -236,11 +218,11 @@ public class AdminBot implements UpdatesListener {
           throw new RuntimeException(e);
         }
       } else {
-        logger.error("No file found for document ID in admin bot: " + document.fileId());
+        logger.error("No file found for document ID in admin bot: {}", document.fileId());
         throw new RuntimeException("No file found in adminBot");
       }
     }
     sendMessage(userId, "Please send .json file");
-    return null;
+    return new Quiz();
   }
 }

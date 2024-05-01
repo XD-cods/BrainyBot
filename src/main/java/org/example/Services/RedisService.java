@@ -1,8 +1,5 @@
 package org.example.Services;
 
-import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.model.User;
-import com.pengrad.telegrambot.request.SendMessage;
 import org.example.model.PermanentUserInfo;
 import org.example.model.TempUserInfo;
 import org.example.model.UserInfo;
@@ -14,8 +11,8 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class RedisService {
-  private RedisTemplate<Long, UserInfo> redisTemplate;
-  private UsersService usersService;
+  private final RedisTemplate<Long, UserInfo> redisTemplate;
+  private final UsersService usersService;
 
   @Autowired
   public RedisService(RedisTemplate<Long, UserInfo> redisTemplate, UsersService usersService) {
@@ -23,8 +20,11 @@ public class RedisService {
     this.usersService = usersService;
   }
 
-
   public void persistUser(UserInfo user, Long userId) {
+    if (user.getPermanentUserInfo().getIsAdmin()) {
+      redisTemplate.opsForValue().set(userId, user);
+      return;
+    }
     redisTemplate.opsForValue().set(userId, user, 5, TimeUnit.SECONDS);
   }
 
@@ -45,11 +45,5 @@ public class RedisService {
       userInfo.setTempUserInfo(tempUserInfo);
       persistUser(userInfo, userId);
     }
-  }
-
-  public void sendNotification(String userName) {
-    PermanentUserInfo permanentUserInfo = usersService.findPermanentUserInfo(userName);
-    TelegramBot telegramBot = new TelegramBot("6683005363:AAFHknGfItPK9EeiiwQmeHMb5t5M_lgh-LM");
-    telegramBot.execute(new SendMessage(permanentUserInfo.getUserId(), "You are expired"));
   }
 }

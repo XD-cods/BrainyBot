@@ -1,8 +1,5 @@
-
-
 package org.example.model;
 
-import com.pengrad.telegrambot.model.Message;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
@@ -110,15 +107,15 @@ public class TempUserInfo {
     return countOfQuestion;
   }
 
+  public void setCountOfQuestion(int countOfQuestion) {
+    this.countOfQuestion = countOfQuestion;
+  }
+
   public String getId() {
     return id;
   }
 
   public void setId(String id) {
     this.id = id;
-  }
-
-  public void setCountOfQuestion(int countOfQuestion) {
-    this.countOfQuestion = countOfQuestion;
   }
 }

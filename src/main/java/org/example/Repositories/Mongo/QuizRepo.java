@@ -13,15 +13,15 @@ import java.util.List;
 @Repository
 public interface QuizRepo extends MongoRepository<Quiz, String> {
   @Query(value = "{}", fields = "{ 'topicName' : 1, '_id' : 0  }")
-  public List<String> findAllTopicName();
+  List<String> findAllTopicName();
 
   @Query("{'topicName' : ?0}")
-  public Quiz findByTopicName(String topicName);
+  Quiz findByTopicName(String topicName);
 
   @DeleteQuery("{'topicName' : ?0}")
-  public void deleteByTopicName(String topicName);
+  void deleteByTopicName(String topicName);
 
   @Query("{'topicName' : ?0}")
   @Update("{$push : {'questionList' : {$each : ?1}}}")
-  public void addByTopic(String topicName, List<Question> questionList);
+  void addByTopic(String topicName, List<Question> questionList);
 }

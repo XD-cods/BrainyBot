@@ -15,20 +15,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.example.Services.QuizService;
 import org.example.Services.RedisService;
-import org.example.Services.UsersService;
 import org.example.model.Question;
 import org.example.model.QuestionOption;
 import org.example.model.Quiz;
 import org.example.model.TempUserInfo;
-import org.example.model.UserInfo;
 import org.example.model.UserQuizSession;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -36,30 +32,31 @@ public class BotUpdate implements UpdatesListener {
 
   private static final Logger log = LogManager.getLogger(BotUpdate.class);
   private final TelegramBot bot;
-  private final Map<Long, UserInfo> users = new HashMap<>();
   private final QuizService quizService;
-  private final UsersService usersService;
   private final RedisService redisService;
 
-  public BotUpdate(TelegramBot bot, QuizService quizService, UsersService usersService, RedisService redisService) {
+  public BotUpdate(TelegramBot bot, QuizService quizService, RedisService redisService) {
     this.bot = bot;
     this.quizService = quizService;
-    this.usersService = usersService;
     this.redisService = redisService;
   }
 
   private static String getQuizStatText(int quizAmount, int rightAnswerCounter) {
-    return String.format("❓ <b>Question number:</b> %d" + "\n\n" + "✅ <b>Right answers:</b> %d\\%d" + "\n\n" +
-                         "Input " + UserBotConstants.START_QUIZ_COMMAND + " to start quiz or chose quiz another quiz "
+    return String.format("❓ <b>Question number:</b> %d" + "\n\n"
+                         + "✅ <b>Right answers:</b> %d\\%d" + "\n\n"
+                         + "Input " + UserBotConstants.START_QUIZ_COMMAND
+                         + " to start quiz or chose quiz another quiz "
                          + UserBotConstants.CHOOSE_TOPIC_COMMAND, quizAmount, rightAnswerCounter, quizAmount);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   private static String getCanceledQuizStatText(int questionCount, int rightAnswerCounter) {
-    return String.format("❓<b>You canceled quiz</b>\n" + "\n" + "<b>The questions were:</b> %d\n\n" +
-                         "✅ <b>Right answers:</b> %d\\%d\n" + "\n" + "Input "
-                         + UserBotConstants.START_QUIZ_COMMAND + " to start quiz or chose quiz another quiz "
+    return String.format("❓<b>You canceled quiz</b>\n" + "\n"
+                         + "<b>The questions were:</b> %d\n\n"
+                         + "✅ <b>Right answers:</b> %d\\%d\n" + "\n"
+                         + "Input " + UserBotConstants.START_QUIZ_COMMAND
+                         + " to start quiz or chose quiz another quiz "
                          + UserBotConstants.CHOOSE_TOPIC_COMMAND, questionCount, rightAnswerCounter, questionCount);
   }
 
@@ -77,7 +74,6 @@ public class BotUpdate implements UpdatesListener {
       Long userId = message.chat().id();
       String messageText = message.text();
       TempUserInfo tempUserInfo = redisService.findUser(message.chat().username(), userId).getTempUserInfo();
-
       if (messageText.isEmpty()) {
         sendMessage(userId, "input " + UserBotConstants.START_BOT_COMMAND);
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
@@ -104,8 +100,7 @@ public class BotUpdate implements UpdatesListener {
           }
           String currentTopicName = tempUserInfo.getCurrentTopicName();
           if (currentTopicName == null) {
-            sendMessage(userId, "Topic is not chosen, please use " +
-                                UserBotConstants.CHOOSE_TOPIC_COMMAND + " command to choose");
+            sendMessage(userId, "Topic is not chosen, please use " + UserBotConstants.CHOOSE_TOPIC_COMMAND + " command to choose");
             break;
           }
           if (tempUserInfo.isChoiceTopic()) {
@@ -140,7 +135,6 @@ public class BotUpdate implements UpdatesListener {
       }
       return UpdatesListener.CONFIRMED_UPDATES_ALL;
     } catch (Exception e) {
-      System.err.println(e);
       log.error(e.getMessage());
     }
 
@@ -153,11 +147,7 @@ public class BotUpdate implements UpdatesListener {
       sendMessage(userId, "Input valid count of question");
     }
     tempUserInfo.setCountOfQuestion(countOfQuestions);
-    sendMessage(userId, String.format("Quiz: %s\nQuestions:%d\nInput " + UserBotConstants.START_QUIZ_COMMAND +
-                                      " or "
-                                      + UserBotConstants.CHOOSE_TOPIC_COMMAND +
-                                      " for choice any topic", tempUserInfo.getCurrentTopicName(),
-            countOfQuestions));
+    sendMessage(userId, String.format("Quiz: %s\nQuestions:%d\nInput " + UserBotConstants.START_QUIZ_COMMAND + " or " + UserBotConstants.CHOOSE_TOPIC_COMMAND + " for choice any topic", tempUserInfo.getCurrentTopicName(), countOfQuestions));
     tempUserInfo.setChoiceCountOfQuestion(false);
     redisService.updateUserInfo(userId, tempUserInfo);
   }
@@ -222,8 +212,7 @@ public class BotUpdate implements UpdatesListener {
     List<QuestionOption> optionsList = question.getOptionList();
     Collections.shuffle(optionsList);
     Keyboard inlineKeyboardMarkup = buildInlineKeyboard(optionsList.size());
-    StringBuilder questionTextMessage = new StringBuilder(String.format("❓ Question: %d\n%s\n",
-            userQuizSession.getQuestionCounter(), question.getQuestion()));
+    StringBuilder questionTextMessage = new StringBuilder(String.format("❓ Question: %d\n%s\n", userQuizSession.getQuestionCounter(), question.getQuestion()));
     for (int i = 0; i < optionsList.size(); i++) {
       questionTextMessage.append(String.format("\n%d. %s", i + 1, optionsList.get(i).getOptionText()));
     }
@@ -236,9 +225,7 @@ public class BotUpdate implements UpdatesListener {
     redisService.updateUserInfo(userId, tempUserInfo);
   }
 
-
   private void sendAnswer(CallbackQuery callbackQuery, Long userId, TempUserInfo tempUserInfo) {
-    Message message = callbackQuery.message();
     String callbackData = callbackQuery.data();
     UserQuizSession userQuizSession = tempUserInfo.getUserQuizSession();
     int userAnswerNum = Integer.parseInt(callbackData);
@@ -277,12 +264,10 @@ public class BotUpdate implements UpdatesListener {
   private int handleCallback(CallbackQuery callbackQuery) {
     Long userId = callbackQuery.from().id();
     TempUserInfo tempUserInfo = redisService.findUser(callbackQuery.from().username(), userId).getTempUserInfo();
-
     String callbackData = callbackQuery.data();
     if (callbackData == null) {
       return UpdatesListener.CONFIRMED_UPDATES_NONE;
     }
-
     clearLastMessageKeyboard(tempUserInfo, userId);
     handlerQuizAnswer(callbackQuery, userId, tempUserInfo);
     return UpdatesListener.CONFIRMED_UPDATES_ALL;
@@ -347,8 +332,7 @@ public class BotUpdate implements UpdatesListener {
   }
 
   private void clearLastMessageKeyboard(TempUserInfo tempUserInfo, Long userId) {
-    EditMessageText editMessage = new EditMessageText(userId, tempUserInfo.getLastKeyboardBotMessageId(),
-            tempUserInfo.getLastKeyboardBotMessageText());
+    EditMessageText editMessage = new EditMessageText(userId, tempUserInfo.getLastKeyboardBotMessageId(), tempUserInfo.getLastKeyboardBotMessageText());
     editMessage.replyMarkup(new InlineKeyboardMarkup(new InlineKeyboardButton("").callbackData("deleted")));
     bot.execute(editMessage);
   }

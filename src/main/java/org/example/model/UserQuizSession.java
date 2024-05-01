@@ -23,22 +23,6 @@ public class UserQuizSession {
     this.questionAmount = questionList.size();
   }
 
-  public void setQuestionAmount(int questionAmount) {
-    this.questionAmount = questionAmount;
-  }
-
-  public void setCurrentQuestion(Question currentQuestion) {
-    this.currentQuestion = currentQuestion;
-  }
-
-  public void setQuestionCounter(int questionCounter) {
-    this.questionCounter = questionCounter;
-  }
-
-  public void setRightAnswerCounter(int rightAnswerCounter) {
-    this.rightAnswerCounter = rightAnswerCounter;
-  }
-
   public boolean isQuizMode() {
     return quizMode;
   }
@@ -57,9 +41,13 @@ public class UserQuizSession {
     return currentQuestion;
   }
 
+  public void setCurrentQuestion(Question currentQuestion) {
+    this.currentQuestion = currentQuestion;
+  }
+
   @JsonIgnore
   public Question getNextQuestion() {
-    if(isNextQuestionAvailable()) {
+    if (isNextQuestionAvailable()) {
       currentQuestion = questionList.get(questionCounter);
       questionCounter++;
       return currentQuestion;
@@ -76,12 +64,24 @@ public class UserQuizSession {
     return questionCounter;
   }
 
+  public void setQuestionCounter(int questionCounter) {
+    this.questionCounter = questionCounter;
+  }
+
   public int getQuestionAmount() {
     return questionAmount;
   }
 
+  public void setQuestionAmount(int questionAmount) {
+    this.questionAmount = questionAmount;
+  }
+
   public int getRightAnswerCounter() {
     return rightAnswerCounter;
+  }
+
+  public void setRightAnswerCounter(int rightAnswerCounter) {
+    this.rightAnswerCounter = rightAnswerCounter;
   }
 
   public List<Question> getQuestionList() {
