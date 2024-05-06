@@ -42,22 +42,13 @@ public class BotUpdate implements UpdatesListener {
   }
 
   private static String getQuizStatText(int quizAmount, int rightAnswerCounter) {
-    return String.format("❓ <b>Question number:</b> %d" + "\n\n"
-                         + "✅ <b>Right answers:</b> %d\\%d" + "\n\n"
-                         + "Input " + UserBotConstants.START_QUIZ_COMMAND
-                         + " to start quiz or chose quiz another quiz "
-                         + UserBotConstants.CHOOSE_TOPIC_COMMAND, quizAmount, rightAnswerCounter, quizAmount);
+    return String.format("❓ <b>Question number:</b> %d" + "\n\n" + "✅ <b>Right answers:</b> %d\\%d" + "\n\n" + "Input " + UserBotConstants.START_QUIZ_COMMAND + " to start quiz or chose quiz another quiz " + UserBotConstants.CHOOSE_TOPIC_COMMAND, quizAmount, rightAnswerCounter, quizAmount);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   private static String getCanceledQuizStatText(int questionCount, int rightAnswerCounter) {
-    return String.format("❓<b>You canceled quiz</b>\n" + "\n"
-                         + "<b>The questions were:</b> %d\n\n"
-                         + "✅ <b>Right answers:</b> %d\\%d\n" + "\n"
-                         + "Input " + UserBotConstants.START_QUIZ_COMMAND
-                         + " to start quiz or chose quiz another quiz "
-                         + UserBotConstants.CHOOSE_TOPIC_COMMAND, questionCount, rightAnswerCounter, questionCount);
+    return String.format("❓<b>You canceled quiz</b>\n" + "\n" + "<b>The questions were:</b> %d\n\n" + "✅ <b>Right answers:</b> %d\\%d\n" + "\n" + "Input " + UserBotConstants.START_QUIZ_COMMAND + " to start quiz or chose quiz another quiz " + UserBotConstants.CHOOSE_TOPIC_COMMAND, questionCount, rightAnswerCounter, questionCount);
   }
 
   @Override
@@ -147,7 +138,9 @@ public class BotUpdate implements UpdatesListener {
       sendMessage(userId, "Input valid count of question");
     }
     tempUserInfo.setCountOfQuestion(countOfQuestions);
-    sendMessage(userId, String.format("Quiz: %s\nQuestions:%d\nInput " + UserBotConstants.START_QUIZ_COMMAND + " or " + UserBotConstants.CHOOSE_TOPIC_COMMAND + " for choice any topic", tempUserInfo.getCurrentTopicName(), countOfQuestions));
+    sendMessage(userId, String.format("Quiz: %s\nQuestions: %d\nInput " + UserBotConstants.START_QUIZ_COMMAND + " or "
+                                      + UserBotConstants.CHOOSE_TOPIC_COMMAND + " for choice any topic",
+            tempUserInfo.getCurrentTopicName(), countOfQuestions));
     tempUserInfo.setChoiceCountOfQuestion(false);
     redisService.updateUserInfo(userId, tempUserInfo);
   }
@@ -275,6 +268,10 @@ public class BotUpdate implements UpdatesListener {
 
   private void handlerQuizAnswer(CallbackQuery callbackQuery, Long userId, TempUserInfo tempUserInfo) {
     UserQuizSession userQuizSession = tempUserInfo.getUserQuizSession();
+    if (userQuizSession == null) {
+      return;
+    }
+
     if (userQuizSession.isQuizMode()) {
       sendAnswer(callbackQuery, userId, tempUserInfo);
     }
@@ -317,7 +314,7 @@ public class BotUpdate implements UpdatesListener {
       sendMessage(userId, "You input over large digital, send me correct digital");
       sendTopics(userId, tempUserInfo);
       return;
-    } else if (topicIndex <= 0) {
+    } else if (topicIndex < 0) {
       sendMessage(userId, "You input so small digital, send me correct digital");
       sendTopics(userId, tempUserInfo);
       return;

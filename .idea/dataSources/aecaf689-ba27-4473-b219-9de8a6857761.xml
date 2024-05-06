@@ -2,7 +2,7 @@
 <dataSource name="@localhost">
   <database-model serializer="dbm" dbms="REDIS" family-id="REDIS" format-version="4.52">
     <root id="1">
-      <ServerVersion>7.2.4</ServerVersion>
+      <ServerVersion>5.0.14</ServerVersion>
     </root>
     <schema id="2" parent="1" name="0">
       <Current>1</Current>

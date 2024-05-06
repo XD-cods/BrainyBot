@@ -1,0 +1,25 @@
+services:
+  redis:
+    image: "redis:5"
+    ports:
+      - "6379:6379"
+    command: "redis-server"
+
+  bot:
+    build: .
+    environment:
+      - SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}
+      - TELEGRAM_USER_TOKEN=${TELEGRAM_USER_TOKEN}
+      - TELEGRAM_ADMIN_TOKEN=${TELEGRAM_ADMIN_TOKEN}
+      - SPRING_DATA_MONGODB_DATABASE=${SPRING_DATA_MONGODB_DATABASE}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_HOSTNAME=${REDIS_HOSTNAME}
+    depends_on:
+      - redis
+
+  grafana:
+    image: "grafana/grafana"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - bot

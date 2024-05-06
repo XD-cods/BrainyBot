@@ -25,7 +25,7 @@ public class RedisService {
       redisTemplate.opsForValue().set(userId, user);
       return;
     }
-    redisTemplate.opsForValue().set(userId, user, 5, TimeUnit.SECONDS);
+    redisTemplate.opsForValue().set(userId, user, 120, TimeUnit.SECONDS);
   }
 
   public UserInfo findUser(String userName, Long userId) {

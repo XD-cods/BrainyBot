@@ -5,7 +5,7 @@
       <ServerVersion>7.0.8</ServerVersion>
     </root>
     <schema id="2" parent="1" name="QuizBot">
-      <LastIntrospectionLocalTimestamp>2024-04-23.17:23:42</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2024-05-06.16:20:08</LastIntrospectionLocalTimestamp>
     </schema>
     <schema id="3" parent="1" name="admin">
       <LastIntrospectionLocalTimestamp>2024-04-20.07:04:15</LastIntrospectionLocalTimestamp>

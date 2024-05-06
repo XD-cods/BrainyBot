@@ -19,7 +19,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 public class MongoDBConfig extends AbstractMongoClientConfiguration {
 
 
-  @Value("${spring.data.mongodb.databaseName}")
+  @Value("${spring.data.mongodb.database}")
   private String dataBaseName;
   @Value("${spring.data.mongodb.uri}")
   private String connectionUri;

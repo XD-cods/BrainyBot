@@ -13,7 +13,7 @@
       </schema-mapping>
     </data-source>
     <data-source name="@localhost" uuid="aecaf689-ba27-4473-b219-9de8a6857761">
-      <database-info product="Redis Standalone" version="7.2.4" jdbc-version="4.2" driver-name="Redis JDBC Driver" driver-version="1.5" dbms="REDIS" exact-version="7.2.4" exact-driver-version="1.5">
+      <database-info product="Redis Standalone" version="5.0.14" jdbc-version="4.2" driver-name="Redis JDBC Driver" driver-version="1.5" dbms="REDIS" exact-version="5.0.14" exact-driver-version="1.5">
         <jdbc-catalog-is-schema>true</jdbc-catalog-is-schema>
       </database-info>
       <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed" />
