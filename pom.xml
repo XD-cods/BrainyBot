@@ -13,6 +13,11 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java-telegram-bot-api.version>7.1.1</java-telegram-bot-api.version>
+        <spring-data-mongodb.version>4.2.4</spring-data-mongodb.version>
+        <mongodb-driver-sync.version>4.11.1</mongodb-driver-sync.version>
+        <jackson-databind.version>2.16.1</jackson-databind.version>
+        <log4j-core.version>2.17.2</log4j-core.version>
     </properties>
     <dependencies>
         <dependency>
@@ -28,42 +33,22 @@
         <dependency>
             <groupId>com.github.pengrad</groupId>
             <artifactId>java-telegram-bot-api</artifactId>
-            <version>7.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-jsonSchema</artifactId>
-            <version>2.17.0</version>
+            <version>${java-telegram-bot-api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
-            <version>4.2.4</version>
+            <version>${spring-data-mongodb.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-sync</artifactId>
-            <version>4.11.1</version>
+            <version>${mongodb-driver-sync.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.16.1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.bhowell2</groupId>
-            <artifactId>debouncer</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.lettuce</groupId>
-            <artifactId>lettuce-core</artifactId>
-            <version>6.3.2.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-            <version>6.1.6</version>
+            <version>${jackson-databind.version}</version>
         </dependency>
         <dependency>
             <groupId>org.junit-pioneer</groupId>
@@ -72,9 +57,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.cache2k</groupId>
+            <artifactId>cache2k-base-bom</artifactId>
+            <version>1.6.0.Final</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.17.2</version>
+            <version>${log4j-core.version}</version>
         </dependency>
     </dependencies>
     <build>

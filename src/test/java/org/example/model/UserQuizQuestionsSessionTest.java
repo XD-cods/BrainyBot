@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-class UserQuizSessionTest {
+class UserQuizQuestionsSessionTest {
   private UserQuizSession userQuizSession;
   private Question question1;
   private Question question2;
@@ -19,9 +19,9 @@ class UserQuizSessionTest {
   question2 = new Question("asddsasdsssa",new ArrayList<>(),"asdsdasd");
   questionList.add(question1);
   questionList.add(question2);
-  Quiz quiz = new Quiz();
-  quiz.setQuestionList(questionList);
-  userQuizSession = new UserQuizSession(quiz);
+  QuizQuestions quizQuestions = new QuizQuestions();
+  quizQuestions.setQuestionList(questionList);
+  userQuizSession = new UserQuizSession(quizQuestions);
   }
 
   @Test
@@ -31,26 +31,26 @@ class UserQuizSessionTest {
 
   @Test
   void isNextQuestionNotAvailable() {
-    userQuizSession = new UserQuizSession(new Quiz());
+    userQuizSession = new UserQuizSession(new QuizQuestions());
     Assertions.assertFalse(userQuizSession.isNextQuestionAvailable());
   }
 
   @Test
-  void addRightCounter() {
+  void incRightCounter() {
     Assertions.assertEquals(userQuizSession.getRightAnswerCounter(),0);
-    userQuizSession.addRightCounter();
+    userQuizSession.incRightCounter();
     Assertions.assertEquals(userQuizSession.getRightAnswerCounter(),1);
   }
 
   @Test
   void getCurrentQuestion() {
-    Assertions.assertNull(userQuizSession.getCurrentQuestion());
+    Assertions.assertNull(userQuizSession.getCurrentQuestionIndex());
     userQuizSession.getNextQuestion();
-    Assertions.assertEquals(userQuizSession.getCurrentQuestion(), question1);
+    Assertions.assertEquals(userQuizSession.getCurrentQuestionIndex(), question1);
     userQuizSession.getNextQuestion();
-    Assertions.assertEquals(userQuizSession.getCurrentQuestion(), question2);
+    Assertions.assertEquals(userQuizSession.getCurrentQuestionIndex(), question2);
     userQuizSession.getNextQuestion();
-    Assertions.assertEquals(userQuizSession.getCurrentQuestion(), question2);
+    Assertions.assertEquals(userQuizSession.getCurrentQuestionIndex(), question2);
   }
 
   @Test
@@ -78,11 +78,11 @@ class UserQuizSessionTest {
   @Test
   void getRightAnswerCounter() {
     Assertions.assertEquals(userQuizSession.getRightAnswerCounter(),0);
-    userQuizSession.addRightCounter();
+    userQuizSession.incRightCounter();
     Assertions.assertEquals(userQuizSession.getRightAnswerCounter(),1);
-    userQuizSession.addRightCounter();
+    userQuizSession.incRightCounter();
     Assertions.assertEquals(userQuizSession.getRightAnswerCounter(),2);
-    userQuizSession.addRightCounter();
+    userQuizSession.incRightCounter();
     Assertions.assertEquals(userQuizSession.getRightAnswerCounter(),2);
   }
 }

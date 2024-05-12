@@ -1,4 +1,4 @@
-package org.example.Configs;
+package org.example.configs;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.client.MongoClient;
@@ -15,19 +15,19 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @Configuration
 @ComponentScan(basePackages = "org.example")
 @PropertySource("classpath:application.properties")
-@EnableMongoRepositories("org.example.Repositories.Mongo")
+@EnableMongoRepositories("org.example.repositories.Mongo")
 public class MongoDBConfig extends AbstractMongoClientConfiguration {
 
 
   @Value("${spring.data.mongodb.database}")
-  private String dataBaseName;
+  private String databaseName;
   @Value("${spring.data.mongodb.uri}")
   private String connectionUri;
 
   @NotNull
   @Override
   protected String getDatabaseName() {
-    return dataBaseName;
+    return databaseName;
   }
 
   @Bean

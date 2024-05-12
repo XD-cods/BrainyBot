@@ -1,94 +1,43 @@
 package org.example.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.data.redis.core.RedisHash;
-
 import java.util.List;
 
-@RedisHash("UserQuizSession")
 public class UserQuizSession {
 
-  private int questionAmount;
-  private List<Question> questionList;
-  private Question currentQuestion;
+  private final List<Question> questions;
+  private int currentQuestionIndex = 0;
   private int questionCounter = 0;
   private int rightAnswerCounter = 0;
-  private boolean quizMode = true;
 
-  public UserQuizSession() {
+  public UserQuizSession(List<Question> questions) {
+    this.questions = questions;
   }
 
-  public UserQuizSession(Quiz quiz) {
-    this.questionList = quiz.getQuestionList();
-    this.questionAmount = questionList.size();
-  }
-
-  public boolean isQuizMode() {
-    return quizMode;
-  }
-
-  public void setQuizMode(boolean quizMode) {
-    this.quizMode = quizMode;
-  }
-
-  public void addRightCounter() {
-    if (rightAnswerCounter != questionAmount) {
-      rightAnswerCounter++;
-    }
-  }
-
-  public Question getCurrentQuestion() {
-    return currentQuestion;
-  }
-
-  public void setCurrentQuestion(Question currentQuestion) {
-    this.currentQuestion = currentQuestion;
-  }
-
-  @JsonIgnore
-  public Question getNextQuestion() {
-    if (isNextQuestionAvailable()) {
-      currentQuestion = questionList.get(questionCounter);
-      questionCounter++;
-      return currentQuestion;
-    }
-    return currentQuestion;
-  }
-
-  @JsonIgnore
-  public boolean isNextQuestionAvailable() {
-    return questionCounter < questionAmount;
-  }
-
-  public int getQuestionCounter() {
-    return questionCounter;
-  }
-
-  public void setQuestionCounter(int questionCounter) {
-    this.questionCounter = questionCounter;
-  }
-
-  public int getQuestionAmount() {
-    return questionAmount;
-  }
-
-  public void setQuestionAmount(int questionAmount) {
-    this.questionAmount = questionAmount;
+  public List<Question> getQuestions() {
+    return questions;
   }
 
   public int getRightAnswerCounter() {
     return rightAnswerCounter;
   }
 
-  public void setRightAnswerCounter(int rightAnswerCounter) {
-    this.rightAnswerCounter = rightAnswerCounter;
+  public int getQuestionCounter() {
+    return questionCounter;
   }
 
-  public List<Question> getQuestionList() {
-    return questionList;
+  public void incQuestionCounter() {
+    questionCounter++;
   }
 
-  public void setQuestionList(List<Question> questionList) {
-    this.questionList = questionList;
+  public int getCurrentQuestionIndex() {
+    return currentQuestionIndex;
+  }
+
+  public void incCurrentQuestionIndex() {
+    currentQuestionIndex++;
+  }
+
+  public void incRightCounter() {
+    rightAnswerCounter++;
   }
 }

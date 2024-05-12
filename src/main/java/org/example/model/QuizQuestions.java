@@ -9,18 +9,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "quiz")
-public class Quiz {
+@Document(collection = "quizQuestions")
+public class QuizQuestions {
   @Id
   @JsonIgnore
   private ObjectId id = new ObjectId();
   private String topicName = "";
   private List<Question> questionList = new ArrayList<>();
 
-  public Quiz() {
+  public QuizQuestions() {
   }
 
-  public Quiz(String topicName, List<Question> questionList) {
+  public QuizQuestions(String topicName, List<Question> questionList) {
     this.topicName = topicName;
     this.questionList = questionList;
   }

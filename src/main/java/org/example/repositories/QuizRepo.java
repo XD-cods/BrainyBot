@@ -1,7 +1,7 @@
-package org.example.Repositories.Mongo;
+package org.example.repositories;
 
 import org.example.model.Question;
-import org.example.model.Quiz;
+import org.example.model.QuizQuestions;
 import org.springframework.data.mongodb.repository.DeleteQuery;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -11,12 +11,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface QuizRepo extends MongoRepository<Quiz, String> {
+public interface QuizRepo extends MongoRepository<QuizQuestions, String> {
   @Query(value = "{}", fields = "{ 'topicName' : 1, '_id' : 0  }")
   List<String> findAllTopicName();
 
   @Query("{'topicName' : ?0}")
-  Quiz findByTopicName(String topicName);
+  QuizQuestions findByTopicName(String topicName);
 
   @DeleteQuery("{'topicName' : ?0}")
   void deleteByTopicName(String topicName);

@@ -17,5 +17,6 @@
             <AppenderRef ref="RollingFile"/>
             <AppenderRef ref="console"/>
         </Root>
+        <Logger name="org.springframework.data.redis.core.RedisConnectionUtils" level="ERROR"/>
     </Loggers>
 </Configuration>

@@ -1,15 +1,14 @@
-package org.example.Services;
+package org.example.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.Repositories.Mongo.QuizRepo;
-import org.example.model.Quiz;
+import org.example.repositories.QuizRepo;
+import org.example.model.QuizQuestions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 public class QuizService {
   private final QuizRepo quizRepo;
-  String pathTopicsName = "topics";
+  String pathTopicsName = "topics"; //todo fetch topic list on start
 
   @Autowired
   public QuizService(QuizRepo quizRepo) {
@@ -28,6 +27,7 @@ public class QuizService {
   }
 
   public List<String> findAllTopicName() {
+    //todo fetch topic list on start
     ObjectMapper objectMapper = new ObjectMapper();
     List<String> topics = quizRepo.findAllTopicName();
     if (topics == null) {
@@ -52,6 +52,7 @@ public class QuizService {
     }
   }
 
+  @Deprecated(forRemoval = true)
   public void updateTopicsFile() {
     long countOfQuiz = quizRepo.count();
     if (countOfQuiz <= 0) {
@@ -66,6 +67,7 @@ public class QuizService {
     }
   }
 
+  @Deprecated(forRemoval = true)
   public List<String> readTopicsFromFile() {
     Path path = Path.of(pathTopicsName);
     long countOfQuiz = quizRepo.count();
@@ -84,28 +86,21 @@ public class QuizService {
     return List.of();
   }
 
-  public void insertNewQuiz(Quiz quiz) {
-    if (quizRepo.findByTopicName(quiz.getTopicName()) != null) {
-      quizRepo.addByTopic(quiz.getTopicName(), quiz.getQuestionList());
+  public void insertNewQuiz(QuizQuestions quizQuestions) {
+    if (quizRepo.findByTopicName(quizQuestions.getTopicName()) != null) {
+      quizRepo.addByTopic(quizQuestions.getTopicName(), quizQuestions.getQuestionList());
       return;
     }
-    quizRepo.save(quiz);
-    try (FileWriter outputStream = new FileWriter(pathTopicsName)) {
-      outputStream.write(String.valueOf(findAllTopicName()));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+    quizRepo.save(quizQuestions);
     }
-    updateTopicsFile();
-  }
 
-  public Quiz findByTopicName(String topicName) {
+  public QuizQuestions findByTopicName(String topicName) {
     return quizRepo.findByTopicName(topicName);
   }
 
-  public void updateQuizByTopicName(String topicName, Quiz newQuiz) {
+  public void updateQuizByTopicName(String topicName, QuizQuestions newQuizQuestions) {
     quizRepo.deleteByTopicName(topicName);
-    insertNewQuiz(newQuiz);
+    insertNewQuiz(newQuizQuestions);
   }
-
 
 }

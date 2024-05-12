@@ -1,12 +1,12 @@
-package org.example.Configs;
+package org.example.configs;
 
-import org.example.model.UserInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisKeyValueAdapter;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,7 +14,9 @@ import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import redis.clients.jedis.JedisPoolConfig;
 
+@Deprecated(forRemoval = true)
 @Configuration
 @ComponentScan("org.example")
 @PropertySource("classpath:application.properties")
@@ -27,10 +29,23 @@ public class RedisConfig {
   private String redisHostName;
 
   @Bean
-  public JedisConnectionFactory jedisConnectionFactory() {
+  public JedisPoolConfig jedisPoolConfig() {
+    JedisPoolConfig poolConfig = new JedisPoolConfig();
+    poolConfig.setMaxTotal(8);
+    poolConfig.setMaxIdle(8);
+    poolConfig.setMinIdle(2);
+    return poolConfig;
+  }
+
+  @Bean
+  public JedisConnectionFactory jedisConnectionFactory(JedisPoolConfig jedisPoolConfig) {
     RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(redisHostName, redisPort);
-    //todo connection pool
-    return new JedisConnectionFactory(configuration);
+    JedisClientConfiguration clientConfig = JedisClientConfiguration.builder()
+            .usePooling()
+            .poolConfig(jedisPoolConfig)
+            .build();
+    // edit log level on error
+    return new JedisConnectionFactory(configuration, clientConfig);
   }
 
   @Bean("redisTemplate")
@@ -51,7 +66,8 @@ public class RedisConfig {
   }
 
   @Bean
-  public RedisMessageListenerContainer redisMessageListenerContainer(KeyspaceNotificationListener keyspaceNotificationListener, JedisConnectionFactory jedisConnectionFactory) {
+  public RedisMessageListenerContainer redisMessageListenerContainer(
+          KeyspaceNotificationListener keyspaceNotificationListener, JedisConnectionFactory jedisConnectionFactory) {
     RedisMessageListenerContainer container = new RedisMessageListenerContainer();
     container.setConnectionFactory(jedisConnectionFactory);
     container.addMessageListener(keyspaceNotificationListener, new PatternTopic("__keyevent@*__:expired"));
