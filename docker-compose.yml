@@ -1,0 +1,17 @@
+services:
+  bot:
+    build: .
+    environment:
+      - SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}
+      - TELEGRAM_USER_TOKEN=${TELEGRAM_USER_TOKEN}
+      - TELEGRAM_ADMIN_TOKEN=${TELEGRAM_ADMIN_TOKEN}
+      - SPRING_DATA_MONGODB_DATABASE=${SPRING_DATA_MONGODB_DATABASE}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_HOSTNAME=${REDIS_HOSTNAME}
+
+  grafana:
+    image: "grafana/grafana-enterprise:10.4.2"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - bot

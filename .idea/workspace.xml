@@ -4,10 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3303dbdc-6474-4dbc-aaae-5f9d00046943" name="Changes" comment="Refactoring answer on the quiz, choice quiz, added block in the time quiz, switch on the command">
+    <list default="true" id="3303dbdc-6474-4dbc-aaae-5f9d00046943" name="Changes" comment="refactor 1">
+      <change afterPath="$PROJECT_DIR$/src/main/diag.dio" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/util/MongoListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/aecaf689-ba27-4473-b219-9de8a6857761.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/aecaf689-ba27-4473-b219-9de8a6857761.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/BotUpdate.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/QuizBotExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/QuizBotExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/QuizBotListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/QuizBotListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/configs/KeyspaceNotificationListener.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/configs/MongoDBConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/configs/MongoDBConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/configs/RedisConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/PermanentUserInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/PermanentUserInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/QuizBotSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/QuizBotSession.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/UserQuizSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/UserQuizSession.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/services/QuizService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/services/QuizService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/services/RedisService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/topics" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/topics" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,13 +31,19 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Enum" />
         <option value="Interface" />
+        <option value="JUnit5 Test Class" />
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="dataBase" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -34,23 +54,56 @@
 }</component>
   <component name="GitToolBoxStore">
     <option name="projectConfigVersion" value="5" />
-  </component>
-  <component name="GithubPullRequestsUISettings">
-    <option name="selectedUrlAndAccountId">
-      <UrlAndAccount>
-        <option name="accountId" value="a7821a41-78b3-41a3-b37a-e8cc301b9ef1" />
-        <option name="url" value="https://github.com/XD-cods/knowBot.git" />
-      </UrlAndAccount>
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="refactor" />
+                    <option name="lastUsedInstant" value="1715526107" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="dataBase" />
+                    <option name="lastUsedInstant" value="1711009328" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="main" />
+                    <option name="lastUsedInstant" value="1711009327" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
     </option>
   </component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/XD-cods/knowBot.git&quot;,
+    &quot;accountId&quot;: &quot;716ae5f9-f2f0-4031-abaf-6f38b82326ad&quot;
+  }
+}</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="jar://$MAVEN_REPOSITORY$/com/github/pengrad/java-telegram-bot-api/6.9.1/java-telegram-bot-api-6.9.1.jar!/com/pengrad/telegrambot/impl/UpdatesHandler.class" root0="SKIP_INSPECTION" />
+    <setting file="jar://$MAVEN_REPOSITORY$/org/cache2k/cache2k-api/1.6.0.Final/cache2k-api-1.6.0.Final-sources.jar!/org/cache2k/Cache.java" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="JvmLoggingSettingsStorage">
+    <option name="loggerId" value="Log4j2" />
+  </component>
+  <component name="Make.Settings">
+    <option name="autoScrollToSourceInToolWindow" value="true" />
   </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 3
+  &quot;customColor&quot;: &quot;ff00f2ff&quot;,
+  &quot;associatedIndex&quot;: 5
 }</component>
   <component name="ProjectId" id="2WtJwtQb4eafXfS6gaatF3c43Bz" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -60,21 +113,57 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/vlad/IdeaProjects/knowBot/src/main/resources/quizes&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "Downloaded.Files.Path.Enabled": "false",
+    "JUnit.All in knowBot.executor": "Run",
+    "JUnit.QuestionTest.executor": "Run",
+    "JUnit.QuizTest.executor": "Run",
+    "JUnit.QuizTest.getQuestionList.executor": "Run",
+    "JUnit.QuizTest.getTopicName.executor": "Run",
+    "JUnit.QuizTest.setQuestionList.executor": "Run",
+    "JUnit.QuizTest.setTopicName.executor": "Run",
+    "JUnit.UserQuizSessionTest.addRightCounter.executor": "Run",
+    "JUnit.UserQuizSessionTest.executor": "Run",
+    "JUnit.UserQuizSessionTest.getCurrentQuestion.executor": "Run",
+    "JUnit.UserQuizSessionTest.getNextQuestion.executor": "Run",
+    "JUnit.UserQuizSessionTest.getQuestionAmount.executor": "Run",
+    "JUnit.UserQuizSessionTest.getQuestionCounter.executor": "Run",
+    "JUnit.UserQuizSessionTest.getRightAnswerCounter.executor": "Run",
+    "JUnit.UserQuizSessionTest.isNextQuestionAvailable.executor": "Run",
+    "JUnit.UserQuizSessionTest.isNextQuestionNotAvailable.executor": "Run",
+    "Makefile Target.doc.executor": "Run",
+    "Makefile Target.mBuild.executor": "Run",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "database.data.extractors.current.export.id": "JSON-Groovy.json.groovy",
+    "database.data.extractors.current.id": "JSON-Groovy.json.groovy",
+    "extract.method.default.visibility": "private",
+    "git-widget-placeholder": "refactor",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Vlad/IdeaProjects/testMong",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "SDKs",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.52988505",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Vlad\IdeaProjects\knowBot\src\main\resources" />
       <recent name="$PROJECT_DIR$/src/main/resources/quizes" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -82,14 +171,26 @@
       <recent name="$PROJECT_DIR$/quiz" />
       <recent name="$PROJECT_DIR$/src/main/resources" />
     </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="org.example.model" />
+      <recent name="org.example" />
+    </key>
   </component>
-  <component name="RunManager">
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value=" " />
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="org.example.Main" />
       <module name="knowBot" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.model.*" />
+          <option name="PATTERN" value="org.example.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -97,16 +198,56 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="All in knowBot" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="knowBot" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="QuizQuestionsTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="knowBot" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.model.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.example.model" />
+      <option name="MAIN_CLASS_NAME" value="org.example.model.QuizQuestionsTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="doc" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
+      <makefile filename="$PROJECT_DIR$/makefile" target="doc" workingDirectory="" arguments="">
+        <envs />
+      </makefile>
+      <method v="2" />
+    </configuration>
+    <configuration name="mBuild" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
+      <makefile filename="$PROJECT_DIR$/makefile" target="mBuild" workingDirectory="" arguments="">
+        <envs />
+      </makefile>
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.Main" />
+        <item itemvalue="Makefile Target.mBuild" />
+        <item itemvalue="Makefile Target.doc" />
+        <item itemvalue="Makefile Target.doc" />
+        <item itemvalue="JUnit.All in knowBot" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="jdk-17.0.9-corretto-17.0.9-4caba194b151-107bc6b7" />
+        <option value="bundled-jdk-9f38398b9061-18abd8497189-intellij.indexing.shared.core-IU-241.14494.240" />
+        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-IU-241.14494.240" />
       </set>
     </attachedChunks>
   </component>
@@ -118,6 +259,51 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1697546185034</updated>
+      <workItem from="1713954574108" duration="1246000" />
+      <workItem from="1713956786673" duration="956000" />
+      <workItem from="1713961777651" duration="2167000" />
+      <workItem from="1713973701354" duration="2540000" />
+      <workItem from="1713976435859" duration="16000" />
+      <workItem from="1713988409885" duration="4106000" />
+      <workItem from="1714051308183" duration="16444000" />
+      <workItem from="1714139136480" duration="3094000" />
+      <workItem from="1714150512184" duration="11000" />
+      <workItem from="1714328659449" duration="1511000" />
+      <workItem from="1714403756979" duration="10495000" />
+      <workItem from="1714582186406" duration="10497000" />
+      <workItem from="1714632999182" duration="1903000" />
+      <workItem from="1714652560245" duration="23000" />
+      <workItem from="1714655522972" duration="4468000" />
+      <workItem from="1714667471721" duration="2141000" />
+      <workItem from="1714670114453" duration="297000" />
+      <workItem from="1714719186114" duration="657000" />
+      <workItem from="1714720016488" duration="2350000" />
+      <workItem from="1714755587104" duration="1187000" />
+      <workItem from="1714898298875" duration="111000" />
+      <workItem from="1714898427826" duration="55000" />
+      <workItem from="1714931193538" duration="5140000" />
+      <workItem from="1714937707350" duration="98000" />
+      <workItem from="1714937820551" duration="35000" />
+      <workItem from="1714970149761" duration="73000" />
+      <workItem from="1715001244574" duration="2094000" />
+      <workItem from="1715005898190" duration="424000" />
+      <workItem from="1715009938783" duration="3265000" />
+      <workItem from="1715013430848" duration="146000" />
+      <workItem from="1715093089197" duration="1933000" />
+      <workItem from="1715097670537" duration="1483000" />
+      <workItem from="1715157356226" duration="2838000" />
+      <workItem from="1715173173858" duration="1764000" />
+      <workItem from="1715438256240" duration="1632000" />
+      <workItem from="1715439918375" duration="4916000" />
+      <workItem from="1715457186147" duration="39000" />
+      <workItem from="1715521378866" duration="4809000" />
+      <workItem from="1715526825206" duration="2112000" />
+      <workItem from="1715617309721" duration="386000" />
+      <workItem from="1715624251408" duration="1284000" />
+      <workItem from="1715628694860" duration="1012000" />
+      <workItem from="1715630287319" duration="2111000" />
+      <workItem from="1715682891805" duration="1331000" />
+      <workItem from="1715684248038" duration="3059000" />
     </task>
     <task id="LOCAL-00001" summary="create project">
       <option name="closed" value="true" />
@@ -167,8 +353,50 @@
       <option name="project" value="LOCAL" />
       <updated>1700459010451</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Add redis to BotUpdate and config him">
+      <option name="closed" value="true" />
+      <created>1714073610012</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1714073610012</updated>
+    </task>
+    <task id="LOCAL-00008" summary="refactoring adminBot and Main and resolve duplication KeyspaceNotificationListener event + get variables with help spring annotations">
+      <option name="closed" value="true" />
+      <created>1714591704863</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1714591704863</updated>
+    </task>
+    <task id="LOCAL-00009" summary="create docker-compose.yml and update Dockerfile and update mapping environments from docker-compose.yml">
+      <option name="closed" value="true" />
+      <created>1715013545890</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1715013545890</updated>
+    </task>
+    <task id="LOCAL-00010" summary="refactor 1">
+      <option name="closed" value="true" />
+      <created>1715526133865</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1715526133865</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="dependencySupport" implementationName="java:org.springframework:spring-core" />
+    <option featureType="dependencySupport" implementationName="executable:docker" />
+    <option featureType="dependencySupport" implementationName="java:com.google.protobuf:protobuf-java" />
+    <option featureType="dependencySupport" implementationName="executable:kubectl" />
+    <option featureType="dependencySupport" implementationName="java:org.springframework.data:spring-data-commons" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -181,7 +409,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="origin/main" />
+                        <option value="dataBase" />
                       </list>
                     </value>
                   </entry>
@@ -200,7 +428,18 @@
     <MESSAGE value="Refactor answer message, added statistics in the end quiz" />
     <MESSAGE value="Added model for storage base info about user (UserInfo) and added function for choice quiz" />
     <MESSAGE value="Refactoring answer on the quiz, choice quiz, added block in the time quiz, switch on the command" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactoring answer on the quiz, choice quiz, added block in the time quiz, switch on the command" />
+    <MESSAGE value="Add redis to BotUpdate and config him" />
+    <MESSAGE value="refactoring adminBot and Main and resolve duplication KeyspaceNotificationListener event + get variables with help spring annotations" />
+    <MESSAGE value="create docker-compose.yml and update Dockerfile and update mapping environments from docker-compose.yml" />
+    <MESSAGE value="refactor 1" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor 1" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="((LinkedHashMap.Entry)((LinkedHashMap)((ObjectSchema)jsonSchema).properties).entrySet().toArray()[1]).getValue()" language="JAVA" custom="java.util.LinkedHashMap,com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema,java.util.LinkedHashMap.Entry" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

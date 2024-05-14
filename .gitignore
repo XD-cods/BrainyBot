@@ -12,6 +12,10 @@ target/
 *.iml
 *.ipr
 src/main/resources/config.properties
+src/main/resources/application.properties
+src/main/resources/hibernate.config.xml
+.env
+.idea/dataSources
 
 ### Eclipse ###
 .apt_generated

@@ -6,7 +6,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class QuizBotExceptionHandler implements ExceptionHandler {
-	Logger logger = LogManager.getLogger();
+
+
+	private static final Logger log = LogManager.getLogger(QuizBotExceptionHandler.class);
+
 	public QuizBotExceptionHandler() {
 	}
 
@@ -16,7 +19,7 @@ public class QuizBotExceptionHandler implements ExceptionHandler {
 			e.response().errorCode();
 			e.response().description();
 		} else {
-			logger.fatal("Was throw exception in class QuizBotExceptionHandler");
+			log.fatal("Was throw exception in class QuizBotExceptionHandler");
 			throw new RuntimeException("Don't access to bot", e);
 		}
 	}

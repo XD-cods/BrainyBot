@@ -1,37 +1,54 @@
 package org.example.model;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
+
 public class UserQuizSession {
 
-  private final int questionAmount;
-  private final Iterator<Question> questionIterator;
-  private Question currentQuestion;
+  private final List<Question> questions;
+  Question currentQuestion;
+  private int currentQuestionIndex = 0;
   private int questionCounter = 0;
   private int rightAnswerCounter = 0;
-  private boolean quizMode = true;
 
-  public UserQuizSession(Collection<Question> questions) {
-    this.questionIterator = questions.iterator();
-    this.questionAmount = questions.size();
-//    this.currentQuestion = this.questionIterator.next();
+  public UserQuizSession(List<Question> questions) {
+    this.questions = questions;
   }
 
-  public boolean isQuizMode() {
-    return quizMode;
+  public UserQuizSession(QuizQuestions quizQuestions) {
+
+    this.questions = quizQuestions.getQuestionList();
   }
 
-  public boolean isNextQuestionAvailable() {
-    return questionIterator.hasNext();
+  public List<Question> getQuestions() {
+    return questions;
   }
 
-  public void addRightCounter() {
+  public int getRightAnswerCounter() {
+    return rightAnswerCounter;
+  }
+
+  public int getQuestionCounter() {
+    return questionCounter;
+  }
+
+  public void incQuestionCounter() {
+    questionCounter++;
+  }
+
+  public int getCurrentQuestionIndex() {
+    return currentQuestionIndex;
+  }
+
+  public void incCurrentQuestionIndex() {
+    currentQuestionIndex++;
+  }
+
+  public void incRightCounter() {
     rightAnswerCounter++;
   }
 
-
-  public void setQuizMode(boolean quizMode) {
-    this.quizMode = quizMode;
+  public int getQuestionAmount() {
+    return questions.size();
   }
 
   public Question getCurrentQuestion() {
@@ -39,19 +56,7 @@ public class UserQuizSession {
   }
 
   public Question getNextQuestion() {
-    questionCounter++;
-    return currentQuestion = questionIterator.next();
-  }
-
-  public int getQuestionCounter() {
-    return questionCounter;
-  }
-
-  public int getQuestionAmount() {
-    return questionAmount;
-  }
-
-  public int getRightAnswerCounter() {
-    return rightAnswerCounter;
+    incQuestionCounter();
+    return currentQuestion = questions.get(currentQuestionIndex++);
   }
 }
