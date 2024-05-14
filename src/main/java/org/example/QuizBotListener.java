@@ -168,9 +168,9 @@ public class QuizBotListener implements UpdatesListener {
   }
 
   private void sendTopics(Long userId, QuizBotSession quizBotSession) {
-    List<String> allTopicsName = quizService.findAllTopicName();
+    List<String> allTopicsName = quizService.getTopics();
     if (allTopicsName.isEmpty()) {
-      allTopicsName = QuizService.getTopics();
+      allTopicsName = quizService.getTopics();
       if (allTopicsName.isEmpty()) {
         sendMessage(userId, "Sorry nothing topics");
         return;
@@ -290,7 +290,7 @@ public class QuizBotListener implements UpdatesListener {
 
   private void choiceTopic(String messageText, QuizBotSession quizBotSession, Long userId) {
     int topicIndex = Integer.parseInt(messageText) - 1;
-    List<String> allTopicName = QuizService.getTopics();
+    List<String> allTopicName = quizService.getTopics();
     if (allTopicName.isEmpty()) {
 
       quizBotSession.setBotSessionMode(QuizBotSessionMode.SESSION_CREATED);

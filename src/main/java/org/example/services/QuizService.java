@@ -23,12 +23,7 @@ public class QuizService {
     topics = quizRepo.findAllTopicName();
   }
 
-  public static List<String> getTopics() {
-    return topics;
-  }
-
-  public List<String> findAllTopicName() {
-    //todo fetch topic list on start
+  public List<String> getTopics() {
     ObjectMapper objectMapper = new ObjectMapper();
     List<String> topic = quizRepo.findAllTopicName();
     if (topic == null) {
@@ -47,45 +42,10 @@ public class QuizService {
   public void deleteAllQuiz() {
     topics = new ArrayList<>();
     quizRepo.deleteAll();
-//
-//    try {
-//      Files.delete(Path.of(pathTopicsName));
-//    } catch (IOException e) {
-//      throw new RuntimeException(e);
-//    }
-  }
-
-  @Deprecated(forRemoval = true)
-  public void updateTopicsFile() {
-//
-//    long countOfQuiz = quizRepo.count();
-//    if (countOfQuiz <= 0) {
-//      return;
-//    }
-//    List<String> allTopicName = this.findAllTopicName();
-//
-//    try {
-//      Files.write(Paths.get(pathTopicsName), allTopicName);
-//    } catch (IOException e) {
-//      throw new RuntimeException(e);
-//    }
-  }
-
-  public void insertNewQuiz(QuizQuestions quizQuestions) {
-    if (quizRepo.findByTopicName(quizQuestions.getTopicName()) != null) {
-      quizRepo.addByTopic(quizQuestions.getTopicName(), quizQuestions.getQuestionList());
-      return;
-    }
-    topics.add(quizQuestions.getTopicName());
-    quizRepo.save(quizQuestions);
   }
 
   public QuizQuestions findByTopicName(String topicName) {
     return quizRepo.findByTopicName(topicName);
   }
 
-  public void updateQuizByTopicName(String topicName, QuizQuestions newQuizQuestions) {
-//    quizRepo.deleteByTopicName(topicName);
-//    insertNewQuiz(newQuizQuestions);
-  }
 }
