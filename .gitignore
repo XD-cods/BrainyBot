@@ -2,7 +2,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-.gitignore
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
@@ -14,8 +14,8 @@ target/
 src/main/resources/config.properties
 src/main/resources/application.properties
 src/main/resources/hibernate.config.xml
-Makefile
 .env
+.idea/dataSources
 
 ### Eclipse ###
 .apt_generated

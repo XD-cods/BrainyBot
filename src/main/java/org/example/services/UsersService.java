@@ -20,11 +20,4 @@ public class UsersService {
     return permanentUserInfo;
   }
 
-  public PermanentUserInfo findPemanentUserInfo(String userName, Long userId) {
-    PermanentUserInfo permanentUserInfo = userRepo.findByUserName(userName);
-    if (permanentUserInfo == null) {
-      return addNewUser(userName, userId);
-    }
-    return permanentUserInfo;
-  }
 }
