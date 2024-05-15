@@ -15,7 +15,7 @@ public class UsersService {
   }
 
   public PermanentUserInfo addNewUser(String userName, Long userId) {
-    PermanentUserInfo permanentUserInfo = new PermanentUserInfo(userName, userId, false);
+    PermanentUserInfo permanentUserInfo = new PermanentUserInfo(userName, userId);
     userRepo.insert(permanentUserInfo);
     return permanentUserInfo;
   }

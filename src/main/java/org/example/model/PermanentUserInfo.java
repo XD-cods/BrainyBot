@@ -3,7 +3,6 @@ package org.example.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.data.redis.core.RedisHash;
 
 @Document
 public class PermanentUserInfo {
@@ -12,16 +11,13 @@ public class PermanentUserInfo {
   private Long userId;
   @Field(name = "userName")
   private String userName;
-  @Field(name = "isAdmin")
-  private boolean isAdmin = false;
 
   public PermanentUserInfo() {
   }
 
-  public PermanentUserInfo(String userName, Long userId, boolean isAdmin) {
+  public PermanentUserInfo(String userName, Long userId) {
     this.userName = userName;
     this.userId = userId;
-    this.isAdmin = isAdmin;
   }
 
   public String getUserName() {
@@ -40,11 +36,4 @@ public class PermanentUserInfo {
     this.userId = userId;
   }
 
-  public boolean getIsAdmin() {
-    return isAdmin;
-  }
-
-  public void setAdmin(boolean admin) {
-    isAdmin = admin;
-  }
 }

@@ -47,6 +47,14 @@ public class QuizBotListener implements UpdatesListener {
     }).addListener((CacheEntryCreatedListener<Long, QuizBotSession>) (cache, entry) -> sendMessage(entry.getKey(), UserBotConstants.STARTING_MESSAGE)).build();
   }
 
+  private static String getQuizStatText(int quizAmount, int rightAnswerCounter) {
+    return String.format("❓ <b>Question number:</b> %d" + "\n\n" + "✅ <b>Right answers:</b> %d\\%d" + "\n\n" + "Input " + UserBotConstants.START_QUIZ_COMMAND + " to start quiz or chose quiz another quiz " + UserBotConstants.CHOOSE_TOPIC_COMMAND, quizAmount, rightAnswerCounter, quizAmount);
+  }
+
+  private static String getCanceledQuizStatText(int questionCount, int rightAnswerCounter) {
+    return String.format("❓<b>You canceled quiz</b>\n" + "\n" + "<b>The questions were:</b> %d\n\n" + "✅ <b>Right answers:</b> %d\\%d\n" + "\n" + "Input " + UserBotConstants.START_QUIZ_COMMAND + " to start quiz or chose quiz another quiz " + UserBotConstants.CHOOSE_TOPIC_COMMAND, questionCount, rightAnswerCounter, questionCount);
+  }
+
   @Override
   public int process(List<Update> updates) throws NullPointerException {
     try {
@@ -60,7 +68,10 @@ public class QuizBotListener implements UpdatesListener {
       Message message = update.message();
       Long userId = message.chat().id();
       String messageText = message.text();
-      QuizBotSession quizBotSession = sessionCache.computeIfAbsent(userId, () -> new QuizBotSession(QuizBotSessionMode.SESSION_CREATED));
+      QuizBotSession quizBotSession = null;
+      if (messageText.equals(UserBotConstants.START_BOT_COMMAND)) {
+        quizBotSession = sessionCache.computeIfAbsent(userId, () -> new QuizBotSession(QuizBotSessionMode.SESSION_CREATED));
+      }
       //todo start here
       switch (messageText) {
         case UserBotConstants.START_BOT_COMMAND -> {
@@ -92,8 +103,9 @@ public class QuizBotListener implements UpdatesListener {
             sendMessage(userId, "You are not chosen quiz");
             break;
           }
-
-          userQuizSession = new UserQuizSession(getGeneratedQuiz(currentTopicName, quizBotSession));
+          QuizQuestions quizQuestions = quizService.findRandomQuestionsByTopicName(quizBotSession.getCurrentTopicName(),
+                  quizBotSession.getCountOfQuestion());
+          userQuizSession = new UserQuizSession(quizQuestions);
           quizBotSession.setUserQuizSession(userQuizSession);
           sendMessage(userId, "Quiz: " + quizBotSession.getCurrentTopicName());
           quizBotSession.setBotSessionMode(QuizBotSessionMode.QUIZ);
@@ -134,33 +146,6 @@ public class QuizBotListener implements UpdatesListener {
     quizBotSession.setCountOfQuestion(countOfQuestions);
     sendMessage(userId, String.format("Quiz: %s\nQuestions: %d\nInput " + UserBotConstants.START_QUIZ_COMMAND + " or " + UserBotConstants.CHOOSE_TOPIC_COMMAND + " for choice any topic", quizBotSession.getCurrentTopicName(), countOfQuestions));
     quizBotSession.setBotSessionMode(QuizBotSessionMode.SESSION_CREATED);
-  }
-
-  private QuizQuestions getGeneratedQuiz(String currentTopicName, QuizBotSession quizBotSession) {
-    QuizQuestions quizQuestions = quizService.findByTopicName(currentTopicName);
-    List<Question> questionList = quizQuestions.getQuestionList();
-    int countOfQuestion = quizBotSession.getCountOfQuestion();
-    if (questionList.size() <= countOfQuestion) {
-      return quizQuestions;
-    }
-    QuizQuestions generatedQuizQuestions = new QuizQuestions();
-    List<Question> generatedQuestionList = new ArrayList<>();
-    Set<Integer> uniqueNumbers = getUniqueNums(questionList.size() - 1, countOfQuestion);
-    for (Integer i : uniqueNumbers) {
-      generatedQuestionList.add(questionList.get(i));
-    }
-    generatedQuizQuestions.setQuestionList(generatedQuestionList);
-    generatedQuizQuestions.setTopicName(quizQuestions.getTopicName());
-    return generatedQuizQuestions;
-  }
-
-  private Set<Integer> getUniqueNums(int max, int count) {
-    Set<Integer> uniqueNums = new HashSet<>();
-    Random random = new Random();
-    while (count > uniqueNums.size()) {
-      uniqueNums.add(random.nextInt(max));
-    }
-    return uniqueNums;
   }
 
   private void sendMessage(Long userId, String s) {
@@ -320,14 +305,6 @@ public class QuizBotListener implements UpdatesListener {
     EditMessageText editMessage = new EditMessageText(userId, quizBotSession.getLastKeyboardBotMessageId(), quizBotSession.getLastKeyboardBotMessageText());
     editMessage.replyMarkup(new InlineKeyboardMarkup(new InlineKeyboardButton("").callbackData("deleted")));
     bot.execute(editMessage);
-  }
-
-  private static String getQuizStatText(int quizAmount, int rightAnswerCounter) {
-    return String.format("❓ <b>Question number:</b> %d" + "\n\n" + "✅ <b>Right answers:</b> %d\\%d" + "\n\n" + "Input " + UserBotConstants.START_QUIZ_COMMAND + " to start quiz or chose quiz another quiz " + UserBotConstants.CHOOSE_TOPIC_COMMAND, quizAmount, rightAnswerCounter, quizAmount);
-  }
-
-  private static String getCanceledQuizStatText(int questionCount, int rightAnswerCounter) {
-    return String.format("❓<b>You canceled quiz</b>\n" + "\n" + "<b>The questions were:</b> %d\n\n" + "✅ <b>Right answers:</b> %d\\%d\n" + "\n" + "Input " + UserBotConstants.START_QUIZ_COMMAND + " to start quiz or chose quiz another quiz " + UserBotConstants.CHOOSE_TOPIC_COMMAND, questionCount, rightAnswerCounter, questionCount);
   }
 
   private String getAnswerText(UserQuizSession userQuizSession, int userAnswerNum) {
