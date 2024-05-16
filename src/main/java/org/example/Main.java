@@ -3,10 +3,12 @@ package org.example;
 import com.pengrad.telegrambot.TelegramBot;
 import org.example.configs.MongoDBConfig;
 import org.example.services.QuizService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
 @PropertySource("classpath:application.properties")
 public class Main {

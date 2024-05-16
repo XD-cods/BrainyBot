@@ -26,10 +26,7 @@ import org.example.services.QuizService;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class QuizBotListener implements UpdatesListener {
@@ -69,9 +66,7 @@ public class QuizBotListener implements UpdatesListener {
       Long userId = message.chat().id();
       String messageText = message.text();
       QuizBotSession quizBotSession = null;
-      if (messageText.equals(UserBotConstants.START_BOT_COMMAND)) {
-        quizBotSession = sessionCache.computeIfAbsent(userId, () -> new QuizBotSession(QuizBotSessionMode.SESSION_CREATED));
-      }
+      quizBotSession = sessionCache.computeIfAbsent(userId, () -> new QuizBotSession(QuizBotSessionMode.SESSION_CREATED));
       //todo start here
       switch (messageText) {
         case UserBotConstants.START_BOT_COMMAND -> {
