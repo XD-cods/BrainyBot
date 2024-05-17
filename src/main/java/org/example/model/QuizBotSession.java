@@ -5,9 +5,8 @@ import org.example.QuizBotSessionMode;
 public class QuizBotSession {
   private QuizBotSessionMode botSessionMode;
 
-  private QuizQuestions currentQuizQuestions;
   private UserQuizSession userQuizSession;
-  private String currentTopicName;
+  private String currentTopicName = "";
   private int lastKeyboardBotMessageId = 0;
   private String lastKeyboardBotMessageText;
   private int countOfQuestion = 0;
@@ -48,13 +47,6 @@ public class QuizBotSession {
     this.lastKeyboardBotMessageText = lastKeyboardBotMessageText;
   }
 
-  public QuizQuestions getCurrentQuiz() {
-    return currentQuizQuestions;
-  }
-
-  public void setCurrentQuiz(QuizQuestions currentQuizQuestions) {
-    this.currentQuizQuestions = currentQuizQuestions;
-  }
 
   public int getCountOfQuestion() {
     return countOfQuestion;

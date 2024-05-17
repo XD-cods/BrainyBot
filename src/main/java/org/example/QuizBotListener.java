@@ -65,9 +65,39 @@ public class QuizBotListener implements UpdatesListener {
       Message message = update.message();
       Long userId = message.chat().id();
       String messageText = message.text();
-      QuizBotSession quizBotSession = null;
-      quizBotSession = sessionCache.computeIfAbsent(userId, () -> new QuizBotSession(QuizBotSessionMode.SESSION_CREATED));
-      //todo start here
+      QuizBotSession quizBotSession = sessionCache.computeIfAbsent(userId,
+              () -> new QuizBotSession(QuizBotSessionMode.SESSION_CREATED));
+      switch (quizBotSession.getBotSessionMode()) {
+        case TOPIC_CHOICE -> {
+          if (messageText.equals(UserBotConstants.CANCEL_COMMAND)) {
+            quizBotSession.setBotSessionMode(QuizBotSessionMode.SESSION_CREATED);
+            sendMessage(userId, UserBotConstants.STARTING_MESSAGE);
+            return UpdatesListener.CONFIRMED_UPDATES_ALL;
+          }
+          choiceTopic(messageText, quizBotSession, userId);
+          return UpdatesListener.CONFIRMED_UPDATES_ALL;
+        }
+        case QUIZ -> {
+          if (messageText.equals(UserBotConstants.CANCEL_COMMAND)) {
+            clearLastMessageKeyboard(quizBotSession, userId);
+            sendStatsCanceledQuiz(userId, quizBotSession);
+            return UpdatesListener.CONFIRMED_UPDATES_ALL;
+          }
+          sendMessage(userId, "Please finish this quiz");
+          return UpdatesListener.CONFIRMED_UPDATES_ALL;
+        }
+
+        case QUESTION_COUNT_CHOICE -> {
+          if (messageText.equals(UserBotConstants.CANCEL_COMMAND)) {
+            quizBotSession.setBotSessionMode(QuizBotSessionMode.SESSION_CREATED);
+            sendMessage(userId, UserBotConstants.STARTING_MESSAGE);
+            return UpdatesListener.CONFIRMED_UPDATES_ALL;
+          }
+          setCountOfQuiz(messageText, userId, quizBotSession);
+          return UpdatesListener.CONFIRMED_UPDATES_ALL;
+        }
+      }
+
       switch (messageText) {
         case UserBotConstants.START_BOT_COMMAND -> {
           clearLastMessageKeyboard(quizBotSession, userId);
@@ -75,65 +105,35 @@ public class QuizBotListener implements UpdatesListener {
           sessionCache.put(userId, new QuizBotSession(QuizBotSessionMode.SESSION_CREATED));
           return UpdatesListener.CONFIRMED_UPDATES_ALL;
         }
-        case UserBotConstants.CHOOSE_TOPIC_COMMAND -> {
-          UserQuizSession userQuizSession = quizBotSession.getUserQuizSession();
-          if (userQuizSession != null) {
-            sendMessage(userId, "Please finish this quiz");
-            break;
-          }
-          sendTopics(userId, quizBotSession);
-        }
+        case UserBotConstants.CHOOSE_TOPIC_COMMAND -> sendTopics(userId, quizBotSession);
         case UserBotConstants.START_QUIZ_COMMAND -> {
-          UserQuizSession userQuizSession = quizBotSession.getUserQuizSession();
-          if (userQuizSession != null) {
-            sendMessage(userId, "Please finish this quiz");
-            break;
-          }
           String currentTopicName = quizBotSession.getCurrentTopicName();
-          if (currentTopicName == null) {
-            sendMessage(userId, "Topic is not chosen, please use " + UserBotConstants.CHOOSE_TOPIC_COMMAND + " command to choose");
-            break;
+          if (currentTopicName.isEmpty()) {
+            sendMessage(userId, "Pleas choice topic " + UserBotConstants.CHOOSE_TOPIC_COMMAND);
+            return UpdatesListener.CONFIRMED_UPDATES_ALL;
           }
-          if (quizBotSession.getBotSessionMode().equals(QuizBotSessionMode.QUESTION_COUNT_CHOICE)) {
-            sendMessage(userId, "You are not chosen quiz");
-            break;
-          }
-          QuizQuestions quizQuestions = quizService.findRandomQuestionsByTopicName(quizBotSession.getCurrentTopicName(),
-                  quizBotSession.getCountOfQuestion());
-          userQuizSession = new UserQuizSession(quizQuestions);
+          int countOfQuestion = quizBotSession.getCountOfQuestion();
+          QuizQuestions quizQuestions = quizService.findRandomQuestionsByTopicName(currentTopicName, countOfQuestion);
+          UserQuizSession userQuizSession = new UserQuizSession(quizQuestions);
+          sendMessage(userId, "Quiz: " + currentTopicName);
           quizBotSession.setUserQuizSession(userQuizSession);
-          sendMessage(userId, "Quiz: " + quizBotSession.getCurrentTopicName());
-          quizBotSession.setBotSessionMode(QuizBotSessionMode.QUIZ);
           sendQuestion(userId, quizBotSession);
+          quizBotSession.setBotSessionMode(QuizBotSessionMode.QUIZ);
         }
-        case UserBotConstants.CANCEL_COMMAND -> {
-          UserQuizSession userQuizSession = quizBotSession.getUserQuizSession();
-          if (userQuizSession == null) {
-            sendMessage(userId, "You aren't begin quiz");
-            break;
-          }
-          clearLastMessageKeyboard(quizBotSession, userId);
-          sendStatsCanceledQuiz(userId, quizBotSession);
-        }
+        case UserBotConstants.CANCEL_COMMAND -> sendMessage(userId, "Nothing canceled");
+        default -> sendMessage(userId, "Input a valid command");
       }
-
-      if (messageText.matches("^[1-9][0-9]*$")) {
-        if (quizBotSession.getBotSessionMode().equals(QuizBotSessionMode.QUESTION_COUNT_CHOICE)) {
-          setCountOfQuiz(messageText, userId, quizBotSession);
-        }
-        if (quizBotSession.getBotSessionMode().equals(QuizBotSessionMode.TOPIC_CHOICE)) {
-          choiceTopic(messageText, quizBotSession, userId);
-        }
-      }
-      return UpdatesListener.CONFIRMED_UPDATES_ALL;
     } catch (Exception e) {
       log.error(e.getMessage());
     }
-
     return UpdatesListener.CONFIRMED_UPDATES_ALL;
   }
 
   private void setCountOfQuiz(String messageText, Long userId, QuizBotSession quizBotSession) {
+    if (!messageText.matches("^[1-9][0-9]*$")) {
+      sendMessage(userId, "Input a number or input " + UserBotConstants.CANCEL_COMMAND + " for cancel count of question choice");
+      return;
+    }
     int countOfQuestions = Integer.parseInt(messageText);
     if (countOfQuestions > 20 || countOfQuestions < 5) {
       sendMessage(userId, "Input valid count of question");
@@ -269,26 +269,24 @@ public class QuizBotListener implements UpdatesListener {
   }
 
   private void choiceTopic(String messageText, QuizBotSession quizBotSession, Long userId) {
+    if (!messageText.matches("^[1-9][0-9]*$")) {
+      sendMessage(userId, "Input a number or input " + UserBotConstants.CANCEL_COMMAND + " for cancel topic choice");
+      return;
+    }
     int topicIndex = Integer.parseInt(messageText) - 1;
     List<String> allTopicName = quizService.getTopics();
     if (allTopicName.isEmpty()) {
-
       quizBotSession.setBotSessionMode(QuizBotSessionMode.SESSION_CREATED);
       sendMessage(userId, "Sorry nothing quiz, send " + UserBotConstants.CHOOSE_TOPIC_COMMAND + " for choice quiz");
       return;
     }
-    if (topicIndex >= allTopicName.size()) {
-      sendMessage(userId, "You input over large digital, send me correct digital");
-      sendTopics(userId, quizBotSession);
-      return;
-    } else if (topicIndex < 0) {
-      sendMessage(userId, "You input so small digital, send me correct digital");
+    if (topicIndex >= allTopicName.size() || topicIndex < 0) {
+      sendMessage(userId, "Send me correct digital from 1 to " + allTopicName.size());
       sendTopics(userId, quizBotSession);
       return;
     }
     String currentTopicName = allTopicName.get(topicIndex);
     quizBotSession.setCurrentTopicName(currentTopicName);
-    quizBotSession.setCurrentQuiz(quizService.findByTopicName(currentTopicName));
     quizBotSession.setBotSessionMode(QuizBotSessionMode.QUESTION_COUNT_CHOICE);
     sendMessage(userId, "Input count to your quiz (at 5 to 20)");
   }

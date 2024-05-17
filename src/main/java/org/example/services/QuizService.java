@@ -16,7 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @Service
 public class QuizService {
   private final Lock lock = new ReentrantLock();
-  private Cache<String, List<String>> topicsCache;
+  private final Cache<String, List<String>> topicsCache;
   private final QuizRepo quizRepo;
 
   @Autowired
@@ -42,15 +42,6 @@ public class QuizService {
     } finally {
       lock.unlock();
     }
-  }
-
-  public void deleteAllQuiz() {
-    topicsCache.remove("topics");
-    quizRepo.deleteAll();
-  }
-
-  public QuizQuestions findByTopicName(String topicName) {
-    return quizRepo.findByTopicName(topicName);
   }
 
   public QuizQuestions findRandomQuestionsByTopicName(String topicName, int count) {
