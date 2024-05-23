@@ -1,28 +1,28 @@
 package org.example.configs;
 
+
 import com.mongodb.ConnectionString;
+import com.mongodb.client.ChangeStreamIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import com.mongodb.client.model.changestream.FullDocument;
-import com.mongodb.client.model.changestream.OperationType;
-import org.example.model.QuizQuestions;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.example.services.QuizService;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
-import org.springframework.data.mongodb.core.ChangeStreamOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.messaging.ChangeStreamRequest;
-import org.springframework.data.mongodb.core.messaging.DefaultMessageListenerContainer;
-import org.springframework.data.mongodb.core.messaging.Subscription;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @ComponentScan(basePackages = "org.example")
@@ -50,29 +50,29 @@ public class MongoDBConfig extends AbstractMongoClientConfiguration {
     return MongoClients.create(new ConnectionString(connectionUri));
   }
 
-  public MongoClient reconnectToDB() {
-    MongoClient currentClient = mongoClient();
-    currentClient.close();
-    return MongoClients.create(new ConnectionString(connectionUri));
-  }
-
   @Bean
-  public DefaultMessageListenerContainer messageListenerContainer(MongoTemplate mongoTemplate, QuizService quizService) {
-    DefaultMessageListenerContainer container = new DefaultMessageListenerContainer(mongoTemplate);
-    container.start();
-    ChangeStreamOptions changeStreamOptions = ChangeStreamOptions.builder()
-            .filter(Aggregation.newAggregation(Aggregation.match(Criteria.where("operationType").is(OperationType.INSERT.getValue()))))
-            .fullDocumentLookup(FullDocument.UPDATE_LOOKUP)
-            .build();
-    ChangeStreamRequest.ChangeStreamRequestOptions options = new ChangeStreamRequest.ChangeStreamRequestOptions(databaseName, "quizQuestions", changeStreamOptions);
-
-    Subscription subscription = container.register(new ChangeStreamRequest<>(message -> {
-      QuizQuestions quizQuestions = message.getBody();
-      if (quizQuestions != null) {
-        String topic = quizQuestions.getTopicName();
-        quizService.addTopic(topic);
+  public ChangeStreamIterable<Document> runEventListener(MongoTemplate mongoTemplate, QuizService quizService) {
+    MongoCollection<Document> collection = mongoTemplate.getCollection("quizQuestions");
+    List<Bson> pipeline = List.of(
+            Aggregates.match(Filters.in("operationType", Arrays.asList("insert", "delete"))));
+    ChangeStreamIterable<Document> changeStream = collection.watch(pipeline);
+    changeStream.forEach(event -> {
+      String operationType = event.getOperationTypeString();
+      if (operationType == null) {
+        return;
       }
-    }, options), QuizQuestions.class);
-    return container;
+
+      switch (operationType) {
+        case "insert" -> {
+          Document document = event.getFullDocument();
+          if (document != null && document.containsKey("topicName")) {
+            quizService.addTopic(document.getString("topicName"));
+          }
+        }
+        case "delete" -> quizService.updateTopics();
+      }
+
+    });
+    return changeStream;
   }
 }

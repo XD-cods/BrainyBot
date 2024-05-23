@@ -48,4 +48,8 @@ public class QuizService {
     return quizRepo.findRandomQuestionsByTopicName(topicName, count);
   }
 
+  public void updateTopics(){
+    List<String> topics = Arrays.stream(quizRepo.findAllTopic().split(",")).toList();
+    topicsCache.put("topics", topics);
+  }
 }
