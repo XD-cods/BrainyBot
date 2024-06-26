@@ -8,7 +8,7 @@ public class QuizBotSession {
   private UserQuizSession userQuizSession;
   private String currentTopicName = "";
   private int lastKeyboardBotMessageId = 0;
-  private String lastKeyboardBotMessageText;
+  private String lastKeyboardBotMessageText ="";
   private int countOfQuestion = 0;
 
   public QuizBotSession(QuizBotSessionMode botSessionMode) {

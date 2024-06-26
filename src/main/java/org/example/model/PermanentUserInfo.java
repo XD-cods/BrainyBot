@@ -8,9 +8,9 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class PermanentUserInfo {
   @Id
   @Field(name = "userId")
-  private Long userId;
+  private Long userId = 0L;
   @Field(name = "userName")
-  private String userName;
+  private String userName = "";
 
   public PermanentUserInfo() {
   }

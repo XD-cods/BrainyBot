@@ -6,10 +6,10 @@ services:
       - SPRING_DATA_MONGODB_DATABASE=${SPRING_DATA_MONGODB_DATABASE}
       - SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}
 
-
   grafana:
     image: "grafana/grafana-enterprise:10.4.2"
     ports:
       - "3000:3000"
     depends_on:
       - bot
+      - prometheus

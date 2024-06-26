@@ -12,7 +12,7 @@ import java.util.List;
 public class Question {
   @Id
   @JsonIgnore
-  private ObjectId id;
+  private ObjectId id = new ObjectId();
   private String question = "";
   private String answerDescription = "";
   private List<QuestionOption> optionList = new ArrayList<>();

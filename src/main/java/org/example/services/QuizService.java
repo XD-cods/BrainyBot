@@ -33,7 +33,7 @@ public class QuizService {
     return topicsCache.get("topics");
   }
 
-  public synchronized void addTopic(String topicName){
+  public void addTopic(String topicName){
     lock.lock();
     try {
       List<String> topics = new ArrayList<>(topicsCache.get("topics"));

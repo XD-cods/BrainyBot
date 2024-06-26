@@ -38,18 +38,14 @@ public class QuizBotListener implements UpdatesListener {
   public QuizBotListener(TelegramBot bot, QuizService quizService) {
     this.bot = bot;
     this.quizService = quizService;
-    this.sessionCache = Cache2kBuilder.of(Long.class, QuizBotSession.class).expireAfterWrite(120, TimeUnit.SECONDS).addListener((CacheEntryExpiredListener<Long, QuizBotSession>) (cache, entry) -> {
-      clearLastMessageKeyboard(cache.get(entry.getKey()), entry.getKey());
-      sendMessage(entry.getKey(), "You've been thinking too long, so you'll have to start over." + " Write /start or /choice.");
-    }).addListener((CacheEntryCreatedListener<Long, QuizBotSession>) (cache, entry) -> sendMessage(entry.getKey(), UserBotConstants.STARTING_MESSAGE)).build();
-  }
-
-  private static String getQuizStatText(int quizAmount, int rightAnswerCounter) {
-    return String.format("❓ <b>Question number:</b> %d" + "\n\n" + "✅ <b>Right answers:</b> %d\\%d" + "\n\n" + "Input " + UserBotConstants.START_QUIZ_COMMAND + " to start quiz or chose quiz another quiz " + UserBotConstants.CHOOSE_TOPIC_COMMAND, quizAmount, rightAnswerCounter, quizAmount);
-  }
-
-  private static String getCanceledQuizStatText(int questionCount, int rightAnswerCounter) {
-    return String.format("❓<b>You canceled quiz</b>\n" + "\n" + "<b>The questions were:</b> %d\n\n" + "✅ <b>Right answers:</b> %d\\%d\n" + "\n" + "Input " + UserBotConstants.START_QUIZ_COMMAND + " to start quiz or chose quiz another quiz " + UserBotConstants.CHOOSE_TOPIC_COMMAND, questionCount, rightAnswerCounter, questionCount);
+    this.sessionCache = Cache2kBuilder.of(Long.class, QuizBotSession.class)
+            .expireAfterWrite(120, TimeUnit.SECONDS)
+            .addListener((CacheEntryExpiredListener<Long, QuizBotSession>) (cache, entry) -> {
+              clearLastMessageKeyboard(cache.get(entry.getKey()), entry.getKey());
+              sendMessage(entry.getKey(), "You've been thinking too long, so you'll have " +
+                                          "to start over." + " Write /start or /choice.");
+            })
+            .build();
   }
 
   @Override
@@ -101,6 +97,7 @@ public class QuizBotListener implements UpdatesListener {
       switch (messageText) {
         case UserBotConstants.START_BOT_COMMAND -> {
           clearLastMessageKeyboard(quizBotSession, userId);
+          sendMessage(userId, UserBotConstants.STARTING_MESSAGE);
           sessionCache.remove(userId);
           sessionCache.put(userId, new QuizBotSession(QuizBotSessionMode.SESSION_CREATED));
           return UpdatesListener.CONFIRMED_UPDATES_ALL;
@@ -127,6 +124,14 @@ public class QuizBotListener implements UpdatesListener {
       log.error(e.getMessage());
     }
     return UpdatesListener.CONFIRMED_UPDATES_ALL;
+  }
+
+  private static String getQuizStatText(int quizAmount, int rightAnswerCounter) {
+    return String.format("❓ <b>Question number:</b> %d" + "\n\n" + "✅ <b>Right answers:</b> %d\\%d" + "\n\n" + "Input " + UserBotConstants.START_QUIZ_COMMAND + " to start quiz or chose quiz another quiz " + UserBotConstants.CHOOSE_TOPIC_COMMAND, quizAmount, rightAnswerCounter, quizAmount);
+  }
+
+  private static String getCanceledQuizStatText(int questionCount, int rightAnswerCounter) {
+    return String.format("❓<b>You canceled quiz</b>\n" + "\n" + "<b>The questions were:</b> %d\n\n" + "✅ <b>Right answers:</b> %d\\%d\n" + "\n" + "Input " + UserBotConstants.START_QUIZ_COMMAND + " to start quiz or chose quiz another quiz " + UserBotConstants.CHOOSE_TOPIC_COMMAND, questionCount, rightAnswerCounter, questionCount);
   }
 
   private void setCountOfQuiz(String messageText, Long userId, QuizBotSession quizBotSession) {

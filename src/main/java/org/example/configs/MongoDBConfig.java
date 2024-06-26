@@ -71,7 +71,6 @@ public class MongoDBConfig extends AbstractMongoClientConfiguration {
         }
         case "delete" -> quizService.updateTopics();
       }
-
     });
     return changeStream;
   }
