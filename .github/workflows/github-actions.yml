@@ -24,3 +24,6 @@ jobs:
 
       - name: Build & Test
         run: mvn -B clean package
+
+      - name: create & run docker image
+        run: make doc
