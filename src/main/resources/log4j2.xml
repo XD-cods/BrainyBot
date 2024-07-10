@@ -8,7 +8,7 @@
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
-                <SizeBasedTriggeringPolicy size="125 MB"/>
+                <SizeBasedTriggeringPolicy size="50 MB"/>
             </Policies>
         </RollingFile>
     </Appenders>
@@ -17,6 +17,5 @@
             <AppenderRef ref="RollingFile"/>
             <AppenderRef ref="console"/>
         </Root>
-        <Logger name="org.springframework.data.redis.core.RedisConnectionUtils" level="ERROR"/>
     </Loggers>
 </Configuration>

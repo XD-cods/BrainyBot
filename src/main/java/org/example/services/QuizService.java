@@ -1,51 +1,55 @@
 package org.example.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.cache2k.Cache;
+import org.cache2k.Cache2kBuilder;
 import org.example.model.QuizQuestions;
 import org.example.repositories.QuizRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 public class QuizService {
-  private static List<String> topics = new ArrayList<>();
+  private final Lock lock = new ReentrantLock();
+  private final Cache<String, List<String>> topicsCache;
   private final QuizRepo quizRepo;
 
   @Autowired
   public QuizService(QuizRepo quizRepo) {
     this.quizRepo = quizRepo;
-    topics = quizRepo.findAllTopicName();
+    topicsCache = new Cache2kBuilder<String, List<String>>() {}
+                          .eternal(true)
+                          .build();
+    List<String> topics = Arrays.stream(quizRepo.findAllTopic().split(",")).toList();
+    topicsCache.put("topics", topics);
   }
 
   public List<String> getTopics() {
-    ObjectMapper objectMapper = new ObjectMapper();
-    List<String> topic = quizRepo.findAllTopicName();
-    if (topic == null) {
-      return List.of();
+    return topicsCache.get("topics");
+  }
+
+  public void addTopic(String topicName){
+    lock.lock();
+    try {
+      List<String> topics = new ArrayList<>(topicsCache.get("topics"));
+      topics.add(topicName);
+      topicsCache.put("topics", topics);
+    } finally {
+      lock.unlock();
     }
-    return topics = topic.stream().map(string -> {
-      try {
-        JsonNode jsonNode = objectMapper.readTree(string);
-        return jsonNode.get("topicName").asText();
-      } catch (JsonProcessingException e) {
-        throw new RuntimeException(e);
-      }
-    }).collect(Collectors.toList());
   }
 
-  public void deleteAllQuiz() {
-    topics = new ArrayList<>();
-    quizRepo.deleteAll();
+  public QuizQuestions findRandomQuestionsByTopicName(String topicName, int count) {
+    return quizRepo.findRandomQuestionsByTopicName(topicName, count);
   }
 
-  public QuizQuestions findByTopicName(String topicName) {
-    return quizRepo.findByTopicName(topicName);
+  public void updateTopics(){
+    List<String> topics = Arrays.stream(quizRepo.findAllTopic().split(",")).toList();
+    topicsCache.put("topics", topics);
   }
-
 }

@@ -1,27 +1,29 @@
 package org.example.repositories;
 
-import org.example.model.Question;
 import org.example.model.QuizQuestions;
-import org.springframework.data.mongodb.repository.DeleteQuery;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
-import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface QuizRepo extends MongoRepository<QuizQuestions, String> {
-  @Query(value = "{}", fields = "{ 'topicName' : 1, '_id' : 0  }")
-  List<String> findAllTopicName();
 
   @Query("{'topicName' : ?0}")
   QuizQuestions findByTopicName(String topicName);
 
-  @DeleteQuery("{'topicName' : ?0}")
-  void deleteByTopicName(String topicName);
+  @Aggregation({"{ $match: { topicName: ?0 } }",
+          "{ $project: {topicName: 1,questionList: 1,_class: 1} }",
+          "{ $unwind: \"$questionList\" }",
+          "{ $sample: { size: ?1 } }",
+          "{ $group: {_id: \"$_id\", topicName:{$first:\"$topicName\"},questionList: { $push: \"$questionList\" },_class:{$first:\"$_class\"}} }",
+  })
+  QuizQuestions findRandomQuestionsByTopicName(String topicName, int n);
 
-  @Query("{'topicName' : ?0}")
-  @Update("{$push : {'questionList' : {$each : ?1}}}")
-  void addByTopic(String topicName, List<Question> questionList);
+  @Aggregation({
+          "{$project: {_id: 0,topicName: 1}}",
+          "{$group: {_id: 0,topicName: { $push: \"$topicName\" }}}",
+          "{$project: {topicName: 1,_id: 0}}"
+  })
+  String findAllTopic();
 }
